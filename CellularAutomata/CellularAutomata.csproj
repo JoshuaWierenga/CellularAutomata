@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="BitMatrix.cs" />
     <Compile Include="CellularAutomata.cs" />
+    <Compile Include="ElementaryCA.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

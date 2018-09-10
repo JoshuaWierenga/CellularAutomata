@@ -88,5 +88,20 @@ namespace CellularAutomata
                 }
             }
         }
+
+        //Shifts each row back to clear last row
+        //this will remove the first row
+        public void ShiftBack()
+        {
+            for (uint i = 0; i < RowCount; i++)
+            {
+                for (uint j = 0; j < ColumnCount; j++)
+                {
+                    //if row is not last then set bit to bit in next row
+                    //if row is last row then set it to false
+                    this[i, j] = i < RowCount - 1 && this[i + 1, j];
+                }
+            }
+        }
     }
 }
