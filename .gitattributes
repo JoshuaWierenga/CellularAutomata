@@ -1,0 +1,17 @@
+# Created from visual studio c# gitattributes, https://raw.githubusercontent.com/alexkaratarakis/gitattributes/master/Common.gitattributes , https://raw.githubusercontent.com/alexkaratarakis/gitattributes/master/Web.gitattributes ,
+# https://github.com/alexkaratarakis/gitattributes/blob/master/VisualStudio.gitattributes , https://raw.githubusercontent.com/alexkaratarakis/gitattributes/master/CSharp.gitattributes
+
+# Auto detect text files and perform LF normalization
+# http://davidlaing.com/2012/09/19/customise-your-gitattributes-to-become-a-git-ninja/
+* text=auto
+
+# SOURCE CODE
+*.cs    diff=csharp
+*.json  text
+
+# PROJECT FILES
+*.sln     text eol=crlf
+*.csproj  text eol=crlf
+
+# EXECUTABLES
+*.exe binary
