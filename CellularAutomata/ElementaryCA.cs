@@ -9,12 +9,23 @@ namespace CellularAutomata
         //the output for 000 and the most significant bit decides the output for 111
         private BitArray Rule { get; }
 
+        //Rule must be an 8 digit binary number and seed must be a binary number that is shorter than max chars on console row
         public ElementaryCA(BitArray rule, BitArray seedData)
         {
+            if (rule.Length != 8)
+            {
+                throw new ArgumentOutOfRangeException(nameof(rule), "Rule must be an 8 digit binary number");
+            }
+
+            if (seedData.Length >= Console.WindowWidth)
+            {
+                throw new ArgumentOutOfRangeException(nameof(seedData), "Seed can only be as long as the console's width");
+            }
+
             Rule = rule;
-            //Elementary ca only needs 2 rows, last row + current, when next row is calculated, rows are pushed back by 1
+            //Elementary ca needs 2 rows, last row + current, when next row is calculated, rows are pushed back by 1
             State = new BitMatrix(2, (uint)seedData.Length);
-            for (int i = 0; i < seedData.Count; i++)
+            for (int i = 0; i < seedData.Length; i++)
             {
                 //Stores seed in current row
                 State[1, (uint)i] = seedData[i];
@@ -77,15 +88,23 @@ namespace CellularAutomata
                 {
                     State[1, i] = Rule[7];
                 }
-
-                //Last bit cannot change
-                State[1, State.ColumnCount - 1] = State[0, State.ColumnCount - 1];
             }
+
+            //Last bit cannot change
+            State[1, State.ColumnCount - 1] = State[0, State.ColumnCount - 1];
+
+            TimesRan++;
         }
 
         //Draws last row + current as squares by using the unicode block elements
         public override void Draw()
         {
+            //Should only draw every second iteration, waits until second iteration as seed data only contains 1 row
+            if (TimesRan % 2 == 0)
+            {
+                return;
+            }
+
             for (uint i = 0; i < State.ColumnCount; i++)
             {
                 //Check if previous row is 1 in this position
@@ -97,7 +116,7 @@ namespace CellularAutomata
                 }
                 else
                 {
-                    //If this row is 1 at i then draw a square in the bottom half of the char
+                    //If this row is 1 at i in the current row then draw a square in the bottom half of the char
                     //else leave it black and just draw a space
                     Console.Write(State[1, i] ? '▄' : ' ');
                 }
@@ -113,6 +132,11 @@ namespace CellularAutomata
             Console.ForegroundColor = ConsoleColor.Black;
             Console.CursorVisible = false;
             Console.Clear();
+        }
+
+        public override void Modify(string[] arguments)
+        {
+            throw new NotImplementedException();
         }
     }
 }
