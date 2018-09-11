@@ -1,52 +1,27 @@
 ﻿using System;
 using System.Collections;
-using System.Threading;
 
 namespace CellularAutomata
 {
     public class SecondOrderReversibleCA : CellularAutomata
     {
-        //Rule  determines the output for each 4 digit binary number where the least significant bit decides
-        //the output for 0000 and the most significant bit decides the output for 1111
-        private BitArray Rule { get; }
+        //Reversible ca needs 3 rows, 2nd previous row, previous row and current
+        private const uint CAHeight = 3;
+
+        //Number of possible inputs, sets required rule length
+        private const uint InputCount = 16;
+
+        //Position to start storing seed in, Stores seed in previous row + current row, 
+        private const uint SeedPosition = 1;
 
         //Rule must be a 16 digit binary number and seed must be a binary number that is shorter than max chars on console row
-        public SecondOrderReversibleCA(BitArray rule, BitMatrix seedData, int delay)
-        {
-            if (rule.Length != 16)
-            {
-                throw new ArgumentOutOfRangeException(nameof(rule), "Rule must be an 16 digit binary number");
-            }
-
-            if (seedData.ColumnCount >= Console.WindowWidth)
-            {
-                throw new ArgumentOutOfRangeException(nameof(seedData), "Seed can only be as long as the console's width");
-            }
-
-            Rule = rule;
-            //Reversible ca needs 3 rows, 2nd previous row, previous row and current
-            //when next row is calculated, rows are pushed back by 1
-            State = new BitMatrix(3, seedData.ColumnCount);
-            for (uint i = 0; i < seedData.RowCount; i++)
-            {
-                for (uint j = 0; j < seedData.ColumnCount; j++)
-                {
-                    //Store first row in previous row and second row in current row
-                    State[i + 1, j] = seedData[i, j];
-                }
-            }
-
-            Delay = delay;
-        }
+        public SecondOrderReversibleCA(BitArray rule, BitMatrix seed, int delay) 
+            : base(CAHeight, InputCount, SeedPosition, rule, seed, delay) {}
 
         //Find next row by applying rule to previous row and 2nd previous row
         public override void Iterate()
         {
-            //Shift 2d array back by 1 row to make room for new row
-            State.ShiftBack();
-
-            //First bit cannot change
-            State[2, 0] = State[0, 0];
+            base.Iterate();
 
             for (uint i = 1; i < State.ColumnCount - 1; i++)
             {
@@ -136,11 +111,6 @@ namespace CellularAutomata
                     State[2, i] = Rule[15];
                 }
             }
-
-            //Last bit cannot change
-            State[2, State.ColumnCount - 1] = State[0, State.ColumnCount - 1];
-
-            TimesRan++;
         }
 
         public override void Draw()
@@ -151,25 +121,7 @@ namespace CellularAutomata
                 return;
             }
 
-            for (uint i = 0; i < State.ColumnCount; i++)
-            {
-                //Check if previous row is 1 in this position
-                if (State[1, i])
-                {
-                    //If both the last row and this row are 1 at i then draw 2 stacked squares
-                    //else if just the previous row then draw a square in the top half of the char
-                    Console.Write(State[2, i] ? '█' : '▀');
-                }
-                else
-                {
-                    //If this row is 1 at i in the current row then draw a square in the bottom half of the char
-                    //else leave it black and just draw a space
-                    Console.Write(State[2, i] ? '▄' : ' ');
-                }
-            }
-
-            Console.WriteLine();
-            Thread.Sleep(Delay);
+            base.Draw();   
         }
 
         public override void SetupConsole()
@@ -209,7 +161,7 @@ namespace CellularAutomata
           
         }
 
-        public void Reverse()
+        private void Reverse()
         {
             for (uint i = 0; i < State.ColumnCount; i++)
             {

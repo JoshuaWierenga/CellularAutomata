@@ -5,42 +5,23 @@ namespace CellularAutomata
 {
     public class ElementaryCA : CellularAutomata
     {
-        //Rule  determines the output for each 3 digit binary number where the least significant bit decides
-        //the output for 000 and the most significant bit decides the output for 111
-        private BitArray Rule { get; }
+        //Elementary ca needs 2 rows, last row + current
+        private const uint CAHeight = 2;
+
+        //Number of possible inputs, sets required rule length
+        private const uint InputCount = 8;
+
+        //Position to store seed in, Stores seed in current row
+        private const uint SeedPosition = 1;
 
         //Rule must be an 8 digit binary number and seed must be a binary number that is shorter than max chars on console row
-        public ElementaryCA(BitArray rule, BitArray seedData)
-        {
-            if (rule.Length != 8)
-            {
-                throw new ArgumentOutOfRangeException(nameof(rule), "Rule must be an 8 digit binary number");
-            }
-
-            if (seedData.Length >= Console.WindowWidth)
-            {
-                throw new ArgumentOutOfRangeException(nameof(seedData), "Seed can only be as long as the console's width");
-            }
-
-            Rule = rule;
-            //Elementary ca needs 2 rows, last row + current, when next row is calculated, rows are pushed back by 1
-            State = new BitMatrix(2, (uint)seedData.Length);
-            for (int i = 0; i < seedData.Length; i++)
-            {
-                //Stores seed in current row
-                State[1, (uint)i] = seedData[i];
-            }
-
-        }
+        public ElementaryCA(BitArray rule, BitMatrix seed, int delay) 
+            : base(CAHeight, InputCount, SeedPosition, rule, seed, delay) {}
 
         //Find next row by applying rule to previous row
         public override void Iterate()
         {
-            //Shift 2d array back by 1 row to make room for new row
-            State.ShiftBack();
-
-            //First bit cannot change
-            State[1, 0] = State[0, 0];
+            base.Iterate();
 
             for (uint i = 1; i < State.ColumnCount - 1; i++)
             {
@@ -89,11 +70,6 @@ namespace CellularAutomata
                     State[1, i] = Rule[7];
                 }
             }
-
-            //Last bit cannot change
-            State[1, State.ColumnCount - 1] = State[0, State.ColumnCount - 1];
-
-            TimesRan++;
         }
 
         //Draws last row + current as squares by using the unicode block elements
@@ -105,24 +81,7 @@ namespace CellularAutomata
                 return;
             }
 
-            for (uint i = 0; i < State.ColumnCount; i++)
-            {
-                //Check if previous row is 1 in this position
-                if (State[0, i])
-                {
-                    //If both the last row and this row are 1 at i then draw 2 stacked squares
-                    //else if just the previous row then draw a square in the top half of the char
-                    Console.Write(State[1, i] ? '█' : '▀');
-                }
-                else
-                {
-                    //If this row is 1 at i in the current row then draw a square in the bottom half of the char
-                    //else leave it black and just draw a space
-                    Console.Write(State[1, i] ? '▄' : ' ');
-                }
-            }
-
-            Console.WriteLine();
+            base.Draw();
         }
 
         public override void SetupConsole()
