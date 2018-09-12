@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 
 namespace CellularAutomata
@@ -124,16 +124,7 @@ namespace CellularAutomata
             base.Draw();   
         }
 
-        public override void SetupConsole()
-        {
-            //TODO allow changing cell colour
-            Console.BackgroundColor = ConsoleColor.White;
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.CursorVisible = false;
-            Console.Clear();
-        }
-
-        //Allows modification of CA once it has starts, to i.e. change delay, reverse, change colours
+        //Allows modification of CA once it has started, to i.e. change delay, reverse, change colours
         public override void Modify(string[] arguments)
         {
             for (int i = 0; i < arguments.Length; i++)
@@ -153,14 +144,12 @@ namespace CellularAutomata
                         i++;
                         Delay = delay;
                         break;
-                    default:
-                        throw new ArgumentException("Option is not valid", nameof(option));
-                        
                 }
             }
           
         }
 
+        //Reverses CA by moving previous row after current row
         private void Reverse()
         {
             for (uint i = 0; i < State.ColumnCount; i++)

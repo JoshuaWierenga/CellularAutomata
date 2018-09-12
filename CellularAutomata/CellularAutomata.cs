@@ -81,8 +81,16 @@ namespace CellularAutomata
             Console.WriteLine();
         }
 
-        public abstract void SetupConsole();
+        public virtual void SetupConsole()
+        {
+            //TODO allow changing cell colour
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.CursorVisible = false;
+            Console.Clear();
+        }
 
+        //Allows modification of CA once it has started, to i.e. change delay, reverse, colours
         public abstract void Modify(string[] arguments);
     }
 }

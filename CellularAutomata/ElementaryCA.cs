@@ -1,4 +1,3 @@
-﻿using System;
 using System.Collections;
 
 namespace CellularAutomata
@@ -84,18 +83,6 @@ namespace CellularAutomata
             base.Draw();
         }
 
-        public override void SetupConsole()
-        {
-            //TODO allow changing cell colour
-            Console.BackgroundColor = ConsoleColor.White;
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.CursorVisible = false;
-            Console.Clear();
-        }
-
-        public override void Modify(string[] arguments)
-        {
-            throw new NotImplementedException();
-        }
+        public override void Modify(string[] arguments) {}
     }
 }
