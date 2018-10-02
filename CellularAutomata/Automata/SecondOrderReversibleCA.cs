@@ -1,8 +1,8 @@
 using System;
 
-namespace CellularAutomata
+namespace CellularAutomata.Automata
 {
-    public class SecondOrderReversibleCA : Automata.CellularAutomata
+    public class SecondOrderReversibleCa : CellularAutomata
     {
         //Reversible ca needs 3 rows, 2nd previous row, previous row and current
         private const uint StateHeight = 3;
@@ -10,12 +10,12 @@ namespace CellularAutomata
         //Number of possible inputs, sets required rule length
         private const uint InputCount = 16;
 
-        //Position to start storing seed in, Stores seed in previous row + current row, 
+        //Position to start storing seed in, Stores seed in previous row + current row,
         private const uint SeedPosition = 1;
 
         //Rule must be a 16 digit binary number and seed must be a binary number that is shorter than max chars on console row
-        public SecondOrderReversibleCA(int[] rule, int[,] seed, int delay) 
-            : base(StateHeight, InputCount, SeedPosition, rule, seed, delay) {}
+        public SecondOrderReversibleCa(int[] rule, int[,] seed, int delay)
+            : base(StateHeight, InputCount, SeedPosition, rule, seed, delay) { }
 
         //Find next row by applying rule to previous row and 2nd previous row
         public override void Iterate()
@@ -41,10 +41,10 @@ namespace CellularAutomata
                 return;
             }
 
-            base.Draw();   
+            base.Draw();
         }
 
-        //Allows modification of CA once it has started, to i.e. change delay, reverse, change colours
+        //Allows modification of CA once it has started, to e.g. change delay, reverse, change colours
         public override void Modify(string[] arguments)
         {
             for (int i = 0; i < arguments.Length; i++)
@@ -56,6 +56,7 @@ namespace CellularAutomata
                     case "reverse":
                         Reverse();
                         break;
+
                     case "delay":
                         if (!int.TryParse(arguments[i + 1], out int delay) || delay < 0)
                         {
@@ -66,7 +67,6 @@ namespace CellularAutomata
                         break;
                 }
             }
-          
         }
 
         //Reverses CA by moving previous row after current row

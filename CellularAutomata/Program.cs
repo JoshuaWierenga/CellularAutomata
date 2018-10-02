@@ -1,4 +1,6 @@
-﻿namespace CellularAutomata
+﻿using CellularAutomata.Automata;
+
+namespace CellularAutomata
 {
     internal static class Program
     {
@@ -21,7 +23,7 @@
             seed[0, 60] = 1;
             seed[1, 60] = 1;
 
-            Automata.CellularAutomata ca = new SecondOrderReversibleCA(rule, seed, delay);*/
+            Automata.CellularAutomata ca = new SecondOrderReversibleCa(rule, seed, delay);*/
 
             //Rule 110
             int[] rule = new int[8];
@@ -34,7 +36,7 @@
             int[,] seed = new int[1,30];
             seed[0, 29] = 1;
 
-            Automata.CellularAutomata ca = new ElementaryCA(rule, seed, delay);
+            Automata.CellularAutomata ca = new ElementaryCa(rule, seed, delay);
 
             ca.SetupConsole();
 

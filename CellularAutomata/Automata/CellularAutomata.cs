@@ -91,7 +91,7 @@ namespace CellularAutomata.Automata
             Console.Clear();
         }
 
-        //Allows modification of CA once it has started, to i.e. change delay, reverse, colours
+        //Allows modification of CA once it has started, to e.g. change delay, reverse, colours
         //TODO allow changing cell colour
         public virtual void Modify(string[] arguments) { }
     }

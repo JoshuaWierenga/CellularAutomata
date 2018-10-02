@@ -1,8 +1,8 @@
 using System;
 
-namespace CellularAutomata
+namespace CellularAutomata.Automata
 {
-    public class ElementaryCA : Automata.CellularAutomata
+    public class ElementaryCa : CellularAutomata
     {
         //Elementary ca needs 2 rows, last row + current
         private const uint StateHeight = 2;
@@ -13,9 +13,9 @@ namespace CellularAutomata
         //Position to store seed in, Stores seed in current row
         private const uint SeedStartRow = 1;
 
-        //Rule must be an 8 digit binary number and seed must be a binary number that is shorter than max chars on console row
-        public ElementaryCA(int[] rule, int[,] seed, int delay) 
-            : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay) {}
+        //Rule must be an 8 digit binary number and seed must be a binary number that is shorter than current console width
+        public ElementaryCa(int[] rule, int[,] seed, int delay)
+            : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay) { }
 
         //Find next row by applying rule to previous row
         public override void Iterate()
