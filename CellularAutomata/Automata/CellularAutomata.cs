@@ -22,6 +22,8 @@ namespace CellularAutomata.Automata
             ConsoleColor.Black
         };
 
+        protected bool Running { get; set; }
+
         //Height controls height of state array, input count is the number of inputs possible and controls rule length
         //and seed position controls y position to begin placing seed
         protected CellularAutomata(uint stateHeight, uint inputCount, uint seedPosition, int[] rule, int[,] seed, int delay)
@@ -49,10 +51,16 @@ namespace CellularAutomata.Automata
             }
 
             Delay = delay;
+
+            Running = true;
         }
 
         public virtual void Iterate()
         {
+            if (!Running)
+            {
+                return;
+            }
             //Shift 2d array back by 1 row to make room for new row
             State.ShiftBack();
             TimesRan++;
@@ -100,37 +108,53 @@ namespace CellularAutomata.Automata
 
         //Allows modification of CA once it has started, to e.g. change delay, reverse, colours
         //can optionally be overridden to add new modifications
-        public virtual void Modify(Modification modification, string[] arguments)
+        public virtual void Modify(Modification modification, string[] arguments = null)
         {
             switch (modification)
             {
                 case Modification.Colour:
-                    //Allows change colour at position
-                    if (arguments.Length == 2 && int.TryParse(arguments[0], out int position) && Enum.TryParse(arguments[1], out ConsoleColor positionColor))
+                    if (arguments != null)
                     {
-                        Colours[position] = positionColor;
-                    }
-                    //Allows changing all colours
-                    else if (arguments.Length == Colours.Length)
-                    {
-                        ConsoleColor[] backup = Colours;
-                        for (int i = 0; i < arguments.Length; i++)
+                        //Allows change colour at position
+                        if (arguments.Length == 2 && int.TryParse(arguments[0], out int position) 
+                                                  && Enum.TryParse(arguments[1], out ConsoleColor positionColor))
                         {
-                            string colour = arguments[i];
-                            if (!Enum.TryParse(colour, out ConsoleColor color))
+                            Colours[position] = positionColor;
+                        }
+                        //Allows changing all colours
+                        else if (arguments.Length == Colours.Length)
+                        {
+                            ConsoleColor[] backup = Colours;
+                            for (int i = 0; i < arguments.Length; i++)
                             {
-                                Colours = backup;
-                                return;
-                            }
+                                string colour = arguments[i];
+                                if (!Enum.TryParse(colour, out ConsoleColor color))
+                                {
+                                    Colours = backup;
+                                    return;
+                                }
 
-                            Colours[i] = color;
+                                Colours[i] = color;
+                            }
                         }
                     }
                     break;
                 case Modification.Delay:
-                    if (arguments.Length == 1 && int.TryParse(arguments[0], out int delay) && delay > 0)
+                    if (arguments != null && arguments.Length == 1 && int.TryParse(arguments[0], out int delay) && delay > 0)
                     {
                         Delay = delay;
+                    }
+                    break;
+                case Modification.Running:
+                    //Allows starting or stopping CA
+                    if (arguments != null && arguments.Length == 1 && bool.TryParse(arguments[0], out bool run))
+                    {
+                        Running = run;
+                    }
+                    //Toggles CA
+                    else
+                    {
+                        Running = !Running;
                     }
                     break;
             }

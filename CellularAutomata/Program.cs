@@ -59,7 +59,7 @@ namespace CellularAutomata
                     ca.Iterate();
                 }
 
-                //ca.Modify(new []{"reverse"});
+                //ca.Modify(Modification.Direction);
             }
         }
     }
