@@ -1,12 +1,11 @@
 using System;
-using System.Collections;
 
 namespace CellularAutomata
 {
-    public class SecondOrderReversibleCA : CellularAutomata
+    public class SecondOrderReversibleCA : Automata.CellularAutomata
     {
         //Reversible ca needs 3 rows, 2nd previous row, previous row and current
-        private const uint CAHeight = 3;
+        private const uint StateHeight = 3;
 
         //Number of possible inputs, sets required rule length
         private const uint InputCount = 16;
@@ -15,20 +14,20 @@ namespace CellularAutomata
         private const uint SeedPosition = 1;
 
         //Rule must be a 16 digit binary number and seed must be a binary number that is shorter than max chars on console row
-        public SecondOrderReversibleCA(BitArray rule, BitMatrix seed, int delay) 
-            : base(CAHeight, InputCount, SeedPosition, rule, seed, delay) {}
+        public SecondOrderReversibleCA(int[] rule, int[,] seed, int delay) 
+            : base(StateHeight, InputCount, SeedPosition, rule, seed, delay) {}
 
         //Find next row by applying rule to previous row and 2nd previous row
         public override void Iterate()
         {
             base.Iterate();
 
-            for (uint i = 1; i < State.ColumnCount - 1; i++)
+            for (uint i = 1; i < State.GetLength(1) - 1; i++)
             {
-                bool aboveBit = State[0, i];
-                bool previousBit = State[1, i - 1];
-                bool currentBit = State[1, i];
-                bool nextBit = State[1, i + 1];
+                bool aboveBit = State[0, i] == 1;
+                bool previousBit = State[1, i - 1] == 1;
+                bool currentBit = State[1, i] == 1;
+                bool nextBit = State[1, i + 1] == 1;
 
                 //0000
                 if (!aboveBit && !previousBit && !currentBit && !nextBit)
@@ -152,9 +151,9 @@ namespace CellularAutomata
         //Reverses CA by moving previous row after current row
         private void Reverse()
         {
-            for (uint i = 0; i < State.ColumnCount; i++)
+            for (uint i = 0; i < State.GetLength(1); i++)
             {
-                bool backup = State[2, i];
+                int backup = State[2, i];
                 State[2, i] = State[1, i];
                 State[1, i] = backup;
             }
