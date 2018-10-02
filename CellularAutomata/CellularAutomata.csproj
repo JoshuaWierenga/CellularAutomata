@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Automata\ElementaryCA.cs" />
     <Compile Include="Automata\CellularAutomata.cs" />
+    <Compile Include="Automata\Modification.cs" />
     <Compile Include="Automata\SecondOrderReversibleCA.cs" />
     <Compile Include="Automata\ThreeColourTotalisticCA.cs" />
     <Compile Include="Int2dExtensions.cs" />

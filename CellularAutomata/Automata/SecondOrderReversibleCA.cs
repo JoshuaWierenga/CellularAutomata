@@ -45,28 +45,17 @@ namespace CellularAutomata.Automata
         }
 
         //Allows modification of CA once it has started, to e.g. change delay, reverse, change colours
-        public override void Modify(string[] arguments)
+        public override void Modify(Modification modification, string[] arguments)
         {
-            for (int i = 0; i < arguments.Length; i++)
+            base.Modify(modification, arguments);
+
+            switch (modification)
             {
-                string option = arguments[i];
-
-                switch (option)
-                {
-                    case "reverse":
-                        Reverse();
-                        break;
-
-                    case "delay":
-                        if (!int.TryParse(arguments[i + 1], out int delay) || delay < 0)
-                        {
-                            throw new ArgumentOutOfRangeException(nameof(delay), "Delay needs to be a positive integer");
-                        }
-                        i++;
-                        Delay = delay;
-                        break;
-                }
+                case Modification.Direction:
+                    Reverse();
+                    break;
             }
+
         }
 
         //Reverses CA by moving previous row after current row

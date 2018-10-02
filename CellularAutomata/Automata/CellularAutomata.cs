@@ -100,7 +100,40 @@ namespace CellularAutomata.Automata
 
         //Allows modification of CA once it has started, to e.g. change delay, reverse, colours
         //can optionally be overridden to add new modifications
-        //TODO allow changing cell colour
-        public virtual void Modify(string[] arguments) { }
+        public virtual void Modify(Modification modification, string[] arguments)
+        {
+            switch (modification)
+            {
+                case Modification.Colour:
+                    //Allows change colour at position
+                    if (arguments.Length == 2 && int.TryParse(arguments[0], out int position) && Enum.TryParse(arguments[1], out ConsoleColor positionColor))
+                    {
+                        Colours[position] = positionColor;
+                    }
+                    //Allows changing all colours
+                    else if (arguments.Length == Colours.Length)
+                    {
+                        ConsoleColor[] backup = Colours;
+                        for (int i = 0; i < arguments.Length; i++)
+                        {
+                            string colour = arguments[i];
+                            if (!Enum.TryParse(colour, out ConsoleColor color))
+                            {
+                                Colours = backup;
+                                return;
+                            }
+
+                            Colours[i] = color;
+                        }
+                    }
+                    break;
+                case Modification.Delay:
+                    if (arguments.Length == 1 && int.TryParse(arguments[0], out int delay) && delay > 0)
+                    {
+                        Delay = delay;
+                    }
+                    break;
+            }
+        }
     }
 }
