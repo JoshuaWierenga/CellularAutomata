@@ -50,6 +50,7 @@
     <Compile Include="Automata\ElementaryCA.cs" />
     <Compile Include="Automata\CellularAutomata.cs" />
     <Compile Include="Automata\SecondOrderReversibleCA.cs" />
+    <Compile Include="Automata\ThreeColourTotalisticCA.cs" />
     <Compile Include="Int2dExtensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

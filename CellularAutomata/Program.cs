@@ -26,7 +26,7 @@ namespace CellularAutomata
             Automata.CellularAutomata ca = new SecondOrderReversibleCa(rule, seed, delay);*/
 
             //Rule 110
-            int[] rule = new int[8];
+            /*int[] rule = new int[8];
             rule[1] = 1;
             rule[2] = 1;
             rule[3] = 1;
@@ -36,13 +36,24 @@ namespace CellularAutomata
             int[,] seed = new int[1,30];
             seed[0, 29] = 1;
 
-            Automata.CellularAutomata ca = new ElementaryCa(rule, seed, delay);
+            Automata.CellularAutomata ca = new ElementaryCa(rule, seed, delay);*/
+
+            //Code 177
+            int[] rule = new int[7];
+            rule[1] = 2;
+            rule[2] = 1;
+            rule[4] = 2;
+
+            int[,] seed = new int[1, 119];
+            seed[0, 60] = 2;
+
+            Automata.CellularAutomata ca = new ThreeColourTotalisticCa(rule, seed, delay);
 
             ca.SetupConsole();
 
             for (int i = 0; i < 500; i++)
             {
-                for (int j = 0; j < 500; j++)
+                for (int j = 0; j < 23; j++)
                 {
                     ca.Draw();
                     ca.Iterate();
@@ -53,4 +64,3 @@ namespace CellularAutomata
         }
     }
 }
- 
