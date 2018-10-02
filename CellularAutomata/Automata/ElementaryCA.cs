@@ -10,7 +10,7 @@ namespace CellularAutomata.Automata
         //Number of possible inputs, sets required rule length
         private const uint InputCount = 8;
 
-        //Position to store seed in, Stores seed in current row
+        //Position to store seed in, 1 stores seed in current row
         private const uint SeedStartRow = 1;
 
         //Rule must be an 8 digit binary number and seed must be a binary number that is shorter than current console width

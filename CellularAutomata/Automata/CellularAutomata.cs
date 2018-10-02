@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 
 namespace CellularAutomata.Automata
@@ -15,13 +15,20 @@ namespace CellularAutomata.Automata
         //Rule determines the output for each input
         protected int[] Rule { get; }
 
+        //Default colours used by CAs, override using new keywoard
+        protected ConsoleColor[] Colours =
+        {
+            ConsoleColor.White,
+            ConsoleColor.Black
+        };
+
         //Height controls height of state array, input count is the number of inputs possible and controls rule length
         //and seed position controls y position to begin placing seed
         protected CellularAutomata(uint stateHeight, uint inputCount, uint seedPosition, int[] rule, int[,] seed, int delay)
         {
             if (rule.Length != inputCount)
             {
-                throw new ArgumentOutOfRangeException(nameof(rule), "Rule must contain exactly" + inputCount + " digits");
+                throw new ArgumentOutOfRangeException(nameof(rule), "Rule must contain exactly " + inputCount + " digits");
             }
 
             if (seed.GetLength(1) >= Console.WindowWidth)
@@ -92,6 +99,7 @@ namespace CellularAutomata.Automata
         }
 
         //Allows modification of CA once it has started, to e.g. change delay, reverse, colours
+        //can optionally be overridden to add new modifications
         //TODO allow changing cell colour
         public virtual void Modify(string[] arguments) { }
     }
