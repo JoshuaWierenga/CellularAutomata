@@ -24,91 +24,12 @@ namespace CellularAutomata
 
             for (uint i = 1; i < State.GetLength(1) - 1; i++)
             {
-                bool aboveBit = State[0, i] == 1;
-                bool previousBit = State[1, i - 1] == 1;
-                bool currentBit = State[1, i] == 1;
-                bool nextBit = State[1, i + 1] == 1;
+                //Concatinate ints and convert to binary
+                string total = State[0, i].ToString() + State[1, i - 1] + State[1, i] + State[1, i + 1];
+                int totalBinary = Convert.ToInt32(total, 2);
 
-                //0000
-                if (!aboveBit && !previousBit && !currentBit && !nextBit)
-                {
-                    State[2, i] = Rule[0];
-                }
-                //0001
-                else if (!aboveBit && !previousBit && !currentBit)
-                {
-                    State[2, i] = Rule[1];
-                }
-                //0010
-                else if (!aboveBit && !previousBit && !nextBit)
-                {
-                    State[2, i] = Rule[2];
-                }
-                //0011
-                else if (!aboveBit && !previousBit)
-                {
-                    State[2, i] = Rule[3];
-                }
-                //0100
-                else if (!aboveBit && !currentBit && !nextBit)
-                {
-                    State[2, i] = Rule[4];
-                }
-                //0101
-                else if (!aboveBit && !currentBit)
-                {
-                    State[2, i] = Rule[5];
-                }
-                //0110
-                else if (!aboveBit && !nextBit)
-                {
-                    State[2, i] = Rule[6];
-                }
-                //0111
-                else if (!aboveBit)
-                {
-                    State[2, i] = Rule[7];
-                }
-                //1000
-                else if (!previousBit && !currentBit && !nextBit)
-                {
-                    State[2, i] = Rule[8];
-                }
-                //1001
-                else if (!previousBit && !currentBit)
-                {
-                    State[2, i] = Rule[9];
-                }
-                //1010
-                else if (!previousBit && !nextBit)
-                {
-                    State[2, i] = Rule[10];
-                }
-                //1011
-                else if (!previousBit)
-                {
-                    State[2, i] = Rule[11];
-                }
-                //1100
-                else if (!currentBit && !nextBit)
-                {
-                    State[2, i] = Rule[12];
-                }
-                //1101
-                else if (!currentBit)
-                {
-                    State[2, i] = Rule[13];
-                }
-                //1110
-                else if (!nextBit)
-                {
-                    State[2, i] = Rule[14];
-                }
-                //1111
-                else
-                {
-                    State[2, i] = Rule[15];
-                }
+                //Set new cell to rule for totalBinary
+                State[2, i] = Rule[totalBinary];
             }
         }
 

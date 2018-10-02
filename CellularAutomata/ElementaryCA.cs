@@ -1,3 +1,5 @@
+using System;
+
 namespace CellularAutomata
 {
     public class ElementaryCA : Automata.CellularAutomata
@@ -22,50 +24,12 @@ namespace CellularAutomata
 
             for (uint i = 1; i < State.GetLength(1) - 1; i++)
             {
-                bool previousBit = State[0, i - 1] == 1;
-                bool currentBit = State[0, i] == 1;
-                bool nextBit = State[0, i + 1] == 1;
+                //Concatinate ints and convert to binary
+                string total = State[0, i - 1].ToString() + State[0, i] + State[0, i + 1];
+                int totalBinary = Convert.ToInt32(total, 2);
 
-                //000
-                if (!previousBit && !currentBit && !nextBit)
-                {
-                    State[1, i] = Rule[0];
-                }
-                //001
-                else if (!previousBit && !currentBit)
-                {
-                    State[1, i] = Rule[1];
-                }
-                //010
-                else if (!previousBit && !nextBit)
-                {
-                    State[1, i] = Rule[2];
-                }
-                //011
-                else if (!previousBit)
-                {
-                    State[1, i] = Rule[3];
-                }
-                //100
-                else if (!currentBit && !nextBit)
-                {
-                    State[1, i] = Rule[4];
-                }
-                //101
-                else if (!currentBit)
-                {
-                    State[1, i] = Rule[5];
-                }
-                //110
-                else if (!nextBit)
-                {
-                    State[1, i] = Rule[6];
-                }
-                //111
-                else
-                {
-                    State[1, i] = Rule[7];
-                }
+                //Set new cell to rule for totalBinary
+                State[1, i] = Rule[totalBinary];
             }
         }
 
