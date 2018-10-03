@@ -45,7 +45,7 @@ namespace CellularAutomata.Automata
         }
 
         //Allows modification of CA once it has started, to e.g. change delay, reverse, change colours
-        public override void Modify(Modification modification, string[] arguments = null)
+        public override void Modify(Modification modification, params object[] arguments)
         {
             base.Modify(modification, arguments);
 

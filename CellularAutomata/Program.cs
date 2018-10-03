@@ -50,7 +50,7 @@ namespace CellularAutomata
 
             Automata.CellularAutomata ca = new ThreeColourTotalisticCa(rule, seed, delay);
 
-            //ca.Modify(Modification.Colour, new []{ConsoleColor.White.ToString(), ConsoleColor.DarkBlue.ToString(), ConsoleColor.Magenta.ToString()});
+            //ca.Modify(Modification.Colour, ConsoleColor.White, ConsoleColor.DarkBlue, ConsoleColor.Magenta);
 
             ca.SetupConsole();
 

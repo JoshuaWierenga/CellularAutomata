@@ -107,7 +107,7 @@ namespace CellularAutomata.Automata
 
         //Allows modification of CA once it has started, to e.g. change delay, reverse, colours
         //can optionally be overridden to add new modifications
-        public virtual void Modify(Modification modification, string[] arguments = null)
+        public virtual void Modify(Modification modification, params object[] arguments)
         {
             switch (modification)
             {
@@ -115,10 +115,10 @@ namespace CellularAutomata.Automata
                     if (arguments != null)
                     {
                         //Allows change colour at position
-                        if (arguments.Length == 2 && int.TryParse(arguments[0], out int position) 
-                                                  && Enum.TryParse(arguments[1], out ConsoleColor positionColor))
+                        if (arguments.Length == 2 && arguments[0] is int position 
+                                                  && arguments[1] is ConsoleColor positionColour)
                         {
-                            Colours[position] = positionColor;
+                            Colours[position] = positionColour;
                         }
                         //Allows changing all colours
                         else if (arguments.Length == Colours.Length)
@@ -126,27 +126,26 @@ namespace CellularAutomata.Automata
                             ConsoleColor[] backup = Colours;
                             for (int i = 0; i < arguments.Length; i++)
                             {
-                                string colour = arguments[i];
-                                if (!Enum.TryParse(colour, out ConsoleColor color))
+                                if (!(arguments[i] is ConsoleColor colour))
                                 {
                                     Colours = backup;
                                     return;
                                 }
 
-                                Colours[i] = color;
+                                Colours[i] = colour;
                             }
                         }
                     }
                     break;
                 case Modification.Delay:
-                    if (arguments != null && arguments.Length == 1 && int.TryParse(arguments[0], out int delay) && delay > 0)
+                    if (arguments != null && arguments.Length == 1 && arguments[0] is int delay && delay > 0)
                     {
                         Delay = delay;
                     }
                     break;
                 case Modification.Running:
                     //Allows starting or stopping CA
-                    if (arguments != null && arguments.Length == 1 && bool.TryParse(arguments[0], out bool run))
+                    if (arguments != null && arguments.Length == 1 && arguments[0] is bool run)
                     {
                         Running = run;
                     }
