@@ -55,7 +55,6 @@ namespace CellularAutomata.Automata
                     Reverse();
                     break;
             }
-
         }
 
         //Reverses CA by moving previous row after current row

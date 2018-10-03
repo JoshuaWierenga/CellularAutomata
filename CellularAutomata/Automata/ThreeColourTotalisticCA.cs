@@ -44,32 +44,5 @@ namespace CellularAutomata.Automata
                 State[1, i] = Rule[total];
             }
         }
-
-        //TODO Move back to base
-        //Draws last row + current as squares by using the unicode block elements
-        public override void Draw()
-        {
-            //Should only draw every second iteration, waits until second iteration as seed data only contains 1 row
-            if (TimesRan % 2 == 0)
-            {
-                return;
-            }
-
-            Thread.Sleep(Delay);
-
-            for (uint i = 0; i < State.GetLength(1); i++)
-            {
-                int previousCell = State[State.GetLength(0) - 2, i];
-                int currentCell = State[State.GetLength(0) - 1, i];
-
-                //Draws both cells using the bottom square unicode char
-                //if both are the same then both colours are same and a rectangle is drawn even with the bottom square char
-                Console.BackgroundColor = Colours[previousCell];
-                Console.ForegroundColor = Colours[currentCell];
-                Console.Write('▄');
-            }
-
-            Console.WriteLine();
-        }
     }
 }

@@ -79,19 +79,14 @@ namespace CellularAutomata.Automata
 
             for (uint i = 0; i < State.GetLength(1); i++)
             {
-                //Check if previous row is 1 in this position
-                if (State[State.GetLength(0) - 2, i] == 1)
-                {
-                    //If both the last row and this row are 1 at i then draw 2 stacked squares
-                    //else if just the previous row then draw a square in the top half of the char
-                    Console.Write(State[State.GetLength(0) - 1, i] == 1 ? '█' : '▀');
-                }
-                else
-                {
-                    //If this row is 1 at i in the current row then draw a square in the bottom half of the char
-                    //else leave it black and just draw a space
-                    Console.Write(State[State.GetLength(0) - 1, i] == 1 ? '▄' : ' ');
-                }
+                int previousCell = State[State.GetLength(0) - 2, i];
+                int currentCell = State[State.GetLength(0) - 1, i];
+
+                //Draws both cells using the bottom square unicode char
+                //if both are the same then both colours are same and a rectangle is drawn even with the bottom square char
+                Console.BackgroundColor = Colours[previousCell];
+                Console.ForegroundColor = Colours[currentCell];
+                Console.Write('▄');
             }
 
             Console.WriteLine();
