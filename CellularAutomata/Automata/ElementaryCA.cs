@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace CellularAutomata.Automata
 {
@@ -24,22 +25,14 @@ namespace CellularAutomata.Automata
             {"Manual Rule", new[]{0} }
         };
 
-        private static readonly string[] DefaultSeeds = {
-            "Single Top Left",
-            "Single Top Middle",
-            "Single Top Right"
-        };
-
-        private static readonly Dictionary<string, int> DefaultDelays = new Dictionary<string, int>
+        private static readonly Dictionary<string, Point[]> DefaultSeeds = new Dictionary<string, Point[]>
         {
-            {"Very Fast (25ms)", 25},
-            {"Fast (50ms)", 50},
-            {"Medium (100ms)", 100},
-            {"Slow (150ms)", 150},
-            {"Very Slow (200ms)", 200}
+            {"Single Top Left", new[] {new Point(0, 1)}},
+            {"Single Top Middle", new []{ new Point((Console.WindowWidth - 2)/2, 1)}},
+            {"Single Top Right", new []{ new Point(Console.WindowWidth - 2, 1)}}
         };
 
-        public ElementaryCa() : base(StateHeight, InputCount, SeedStartRow, DefaultRules, CAbase, DefaultSeeds, DefaultDelays) {}
+        public ElementaryCa() : base(StateHeight, InputCount, DefaultRules, CAbase, DefaultSeeds) {}
 
         //Rule must be an 8 digit binary number and seed must be a binary number that is shorter than current console width
         public ElementaryCa(int[] rule, int[,] seed, int delay) : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay) {}

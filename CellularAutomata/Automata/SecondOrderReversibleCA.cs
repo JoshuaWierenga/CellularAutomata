@@ -1,9 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace CellularAutomata.Automata
 {
     public class SecondOrderReversibleCa : CellularAutomata
     {
+        //Second Order Reversible CA runs in base 2
+        private const int CAbase = 2;
+
         //Reversible ca needs 3 rows, 2nd previous row, previous row and current
         private const uint StateHeight = 3;
 
@@ -12,6 +17,21 @@ namespace CellularAutomata.Automata
 
         //Position to start storing seed in, Stores seed in previous row + current row,
         private const uint SeedStartRow = 1;
+
+        private static readonly Dictionary<string, int[]> DefaultRules = new Dictionary<string, int[]>
+        {
+            {"Rule 30R", new[]{0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1}},
+            {"Manual Rule", new[]{0} }
+        };
+
+        private static readonly Dictionary<string, Point[]> DefaultSeeds = new Dictionary<string, Point[]>
+        {
+            {"2 Stacked Top Left", new[] {new Point(0, 1), new Point(0, 1) }},
+            {"2 Stacked Top Middle", new []{ new Point((Console.WindowWidth - 2) / 2, 1), new Point((Console.WindowWidth - 2) / 2, 2)}},
+            {"2 Stacked Top Right", new []{ new Point(Console.WindowWidth - 2, 1), new Point(Console.WindowWidth - 2, 2)}}
+        };
+
+        public SecondOrderReversibleCa() : base(StateHeight, InputCount, DefaultRules, CAbase, DefaultSeeds) {}
 
         //Rule must be a 16 digit binary number and seed must be a binary number that is shorter than max chars on console row
         public SecondOrderReversibleCa(int[] rule, int[,] seed, int delay) : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay) {}

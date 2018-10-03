@@ -21,9 +21,11 @@ namespace CellularAutomata
 
             int[,] seed = new int[2, 119];
             seed[0, 60] = 1;
-            seed[1, 60] = 1;
+            seed[1, 60] = 1;*/
 
-            Automata.CellularAutomata ca = new SecondOrderReversibleCa(rule, seed, delay);*/
+            //Automata.CellularAutomata ca = new SecondOrderReversibleCa(rule, seed, delay);
+
+            //Automata.CellularAutomata ca = new SecondOrderReversibleCa();
 
             Automata.CellularAutomata ca = new ElementaryCa();
 

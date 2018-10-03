@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 
@@ -28,16 +29,23 @@ namespace CellularAutomata.Automata
         //Whether or not the program can iterate
         protected bool Running { get; set; }
 
+        private static readonly Dictionary<string, int> DefaultDelays = new Dictionary<string, int>
+        {
+            {"Very Fast (25ms)", 25},
+            {"Fast (50ms)", 50},
+            {"Medium (100ms)", 100},
+            {"Slow (150ms)", 150},
+            {"Very Slow (200ms)", 200}
+        };
+
         //Height controls height of state array, input count is the number of inputs possible and controls rule length
         //and seed position controls y position to begin placing seed
-        protected CellularAutomata(uint stateHeight, uint inputCount, uint seedPosition,
-            Dictionary<string, int[]> allowedRules, int caBase, string[] allowedSeeds,
-            Dictionary<string, int> allowedDelays)
-        {
+        protected CellularAutomata(uint stateHeight, uint inputCount, Dictionary<string, int[]> allowedRules,
+            int caBase, Dictionary<string, Point[]> allowedSeeds)
+        {        
             Rule = GetRule(allowedRules, inputCount, caBase);
-            State = GetSeed(allowedSeeds, stateHeight, seedPosition);
-            Delay = GetDelay(allowedDelays);
-
+            State = GetSeed(allowedSeeds, stateHeight);
+            Delay = GetDelay(DefaultDelays);
             Running = true;
         }
 
@@ -199,11 +207,11 @@ namespace CellularAutomata.Automata
         }
 
         //TODO allow manual seed entry
-        //TODO allow multiple active cells in default seeds
-        private static int[,] GetSeed(string[] allowedSeeds, uint stateHeight, uint seedPosition)
+        private static int[,] GetSeed(Dictionary<string, Point[]> allowedSeeds, uint stateHeight)
         {
-            string option = UserRequest.GetOption("Select Initial Row", allowedSeeds, true);
+            string option = UserRequest.GetOption("Select Initial Row", allowedSeeds.Keys.ToArray(), true);
 
+            //TODO switch to having a set size reguardless of screen width is odd or even or simplify size to single expression
             int maxSeedSize = Console.WindowWidth - 1;
             if (maxSeedSize % 2 == 1)
             {
@@ -212,17 +220,17 @@ namespace CellularAutomata.Automata
 
             int[,] seed = new int[stateHeight, maxSeedSize];
 
-            switch (option)
+            foreach (Point point in allowedSeeds[option])
             {
-                case "Single Top Left":
-                    seed[seedPosition, 0] = 1;
-                    break;
-                case "Single Top Middle":
-                    seed[seedPosition, maxSeedSize / 2] = 1;
-                    break;
-                case "Single Top Right":
-                    seed[seedPosition, maxSeedSize - 1] = 1;
-                    break;
+                if (point.X > maxSeedSize - 1)
+                {
+                    seed[point.Y, maxSeedSize - 1] = 1;
+                }
+                else
+                {
+                    seed[point.Y, point.X] = 1;
+                }
+                
             }
 
             return seed;
