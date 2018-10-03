@@ -11,11 +11,13 @@ namespace CellularAutomata.Automata
         private const uint InputCount = 16;
 
         //Position to start storing seed in, Stores seed in previous row + current row,
-        private const uint SeedPosition = 1;
+        private const uint SeedStartRow = 1;
 
         //Rule must be a 16 digit binary number and seed must be a binary number that is shorter than max chars on console row
         public SecondOrderReversibleCa(int[] rule, int[,] seed, int delay)
-            : base(StateHeight, InputCount, SeedPosition, rule, seed, delay) { }
+        {
+           Setup(StateHeight, InputCount, SeedStartRow, rule, seed, delay);
+        }
 
         //Find next row by applying rule to previous row and 2nd previous row
         public override void Iterate()

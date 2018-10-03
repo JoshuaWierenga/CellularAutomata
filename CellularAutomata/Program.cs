@@ -10,7 +10,7 @@ namespace CellularAutomata
             int delay = 75;
 
             //Rule 30R
-            int[] rule = new int[16];
+            /*int[] rule = new int[16];
             rule[1] = 1;
             rule[2] = 1;
             rule[3] = 1;
@@ -24,20 +24,9 @@ namespace CellularAutomata
             seed[0, 60] = 1;
             seed[1, 60] = 1;
 
-            Automata.CellularAutomata ca = new SecondOrderReversibleCa(rule, seed, delay);
+            Automata.CellularAutomata ca = new SecondOrderReversibleCa(rule, seed, delay);*/
 
-            //Rule 110
-            /*int[] rule = new int[8];
-            rule[1] = 1;
-            rule[2] = 1;
-            rule[3] = 1;
-            rule[5] = 1;
-            rule[6] = 1;
-
-            int[,] seed = new int[1,30];
-            seed[0, 29] = 1;
-
-            Automata.CellularAutomata ca = new ElementaryCa(rule, seed, delay);*/
+            Automata.CellularAutomata ca = new ElementaryCa();
 
             //Code 177
             /*int[] rule = new int[7];

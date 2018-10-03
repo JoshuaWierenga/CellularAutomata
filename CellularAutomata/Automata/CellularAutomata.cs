@@ -10,10 +10,10 @@ namespace CellularAutomata.Automata
         protected int Delay { get; set; }
 
         //Stores current state of the automata
-        protected int[,] State { get; }
+        protected int[,] State { get; private set; }
 
         //Rule determines the output for each input
-        protected int[] Rule { get; }
+        protected int[] Rule { get; private set; }
 
         //Default colours used by CAs
         protected ConsoleColor[] Colours =
@@ -27,7 +27,7 @@ namespace CellularAutomata.Automata
         //Height controls height of state array, input count is the number of inputs possible and controls rule length
         //and seed position controls y position to begin placing seed
         //#TODO limit max rule to prevent entering non existant rules
-        protected CellularAutomata(uint stateHeight, uint inputCount, uint seedPosition, int[] rule, int[,] seed, int delay)
+        protected void Setup(uint stateHeight, uint inputCount, uint seedPosition, int[] rule, int[,] seed, int delay)
         {
             if (rule.Length != inputCount)
             {
@@ -93,6 +93,7 @@ namespace CellularAutomata.Automata
         }
 
         //Setups up the console to draw cells, can optionally be overridden to change setup
+        //TODO be able to change entire background colour after drawing has begun
         public virtual void SetupConsole()
         {
             Console.BackgroundColor = Colours[0];

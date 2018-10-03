@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 
 namespace CellularAutomata.Automata
 {
@@ -25,8 +24,8 @@ namespace CellularAutomata.Automata
         };
 
         public ThreeColourTotalisticCa(int[] rule, int[,] seed, int delay)
-            : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay)
         {
+            Setup(StateHeight, InputCount, SeedStartRow, rule, seed, delay);
             Colours = DefaultColours;
         }
 
