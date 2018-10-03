@@ -1,4 +1,5 @@
-﻿using CellularAutomata.Automata;
+﻿using System;
+using CellularAutomata.Automata;
 
 namespace CellularAutomata
 {
@@ -48,6 +49,8 @@ namespace CellularAutomata
             seed[0, 60] = 2;
 
             Automata.CellularAutomata ca = new ThreeColourTotalisticCa(rule, seed, delay);
+
+            //ca.Modify(Modification.Colour, new []{ConsoleColor.White.ToString(), ConsoleColor.DarkBlue.ToString(), ConsoleColor.Magenta.ToString()});
 
             ca.SetupConsole();
 

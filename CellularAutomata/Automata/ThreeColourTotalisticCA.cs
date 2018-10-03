@@ -15,7 +15,7 @@ namespace CellularAutomata.Automata
         private const uint SeedStartRow = 1;
 
         //Stores colours used for cells
-        private new static readonly ConsoleColor[] Colours = {
+        private static readonly ConsoleColor[] DefaultColours = {
             //Used for cells with a value of 0
             ConsoleColor.White,
             //Used for cells with a value of 1
@@ -25,7 +25,10 @@ namespace CellularAutomata.Automata
         };
 
         public ThreeColourTotalisticCa(int[] rule, int[,] seed, int delay)
-            : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay) { }
+            : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay)
+        {
+            Colours = DefaultColours;
+        }
 
         //Find next row by applying rule to previous row
         public override void Iterate()
