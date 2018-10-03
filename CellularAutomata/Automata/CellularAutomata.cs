@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace CellularAutomata.Automata
@@ -10,24 +12,39 @@ namespace CellularAutomata.Automata
         protected int Delay { get; set; }
 
         //Stores current state of the automata
-        protected int[,] State { get; private set; }
+        protected int[,] State { get; }
 
         //Rule determines the output for each input
-        protected int[] Rule { get; private set; }
+        protected int[] Rule { get; }
 
         //Default colours used by CAs
+        //TODO fix crashing when ca base != 2 and colours have not been changed
         protected ConsoleColor[] Colours =
         {
             ConsoleColor.White,
             ConsoleColor.Black
         };
+
         //Whether or not the program can iterate
         protected bool Running { get; set; }
 
         //Height controls height of state array, input count is the number of inputs possible and controls rule length
         //and seed position controls y position to begin placing seed
+        protected CellularAutomata(uint stateHeight, uint inputCount, uint seedPosition,
+            Dictionary<string, int[]> allowedRules, int caBase, string[] allowedSeeds,
+            Dictionary<string, int> allowedDelays)
+        {
+            Rule = GetRule(allowedRules, inputCount, caBase);
+            State = GetSeed(allowedSeeds, stateHeight, seedPosition);
+            Delay = GetDelay(allowedDelays);
+
+            Running = true;
+        }
+
+        //Height controls height of state array, input count is the number of inputs possible and controls rule length
+        //and seed position controls y position to begin placing seed
         //#TODO limit max rule to prevent entering non existant rules
-        protected void Setup(uint stateHeight, uint inputCount, uint seedPosition, int[] rule, int[,] seed, int delay)
+        protected CellularAutomata(uint stateHeight, uint inputCount, uint seedPosition, int[] rule, int[,] seed, int delay)
         {
             if (rule.Length != inputCount)
             {
@@ -152,6 +169,70 @@ namespace CellularAutomata.Automata
                     }
                     break;
             }
+        }
+
+        private static int[] GetRule(Dictionary<string, int[]> allowedRules, uint ruleLength, int caBase)
+        {
+            string option = UserRequest.GetOption("Select Rule", allowedRules.Keys.ToArray(), true);
+            int[] rule = allowedRules[option];
+
+            if (option == "Manual Rule")
+            {
+                //Reset rule
+                rule = new int[8];
+                //Remove rule answer
+                Console.CursorTop = Console.CursorTop - 1;
+
+                //TODO move to base and explain the 2
+                //Get rule from user
+                int number = UserRequest.GetNumber("Rule", (int)Math.Pow(caBase, ruleLength), false);
+                //Convert rule to 8 bit binary number
+                string numberBinary = Convert.ToString(number, caBase).PadLeft(8, '0');
+                //Store rule in rule var in reverse order
+                for (int i = 0; i < numberBinary.Length; i++)
+                {
+                    rule[ruleLength - 1 - i] = int.Parse(numberBinary[i].ToString());
+                }
+            }
+
+            return rule;
+        }
+
+        //TODO allow manual seed entry
+        //TODO allow multiple active cells in default seeds
+        private static int[,] GetSeed(string[] allowedSeeds, uint stateHeight, uint seedPosition)
+        {
+            string option = UserRequest.GetOption("Select Initial Row", allowedSeeds, true);
+
+            int maxSeedSize = Console.WindowWidth - 1;
+            if (maxSeedSize % 2 == 1)
+            {
+                maxSeedSize--;
+            }
+
+            int[,] seed = new int[stateHeight, maxSeedSize];
+
+            switch (option)
+            {
+                case "Single Top Left":
+                    seed[seedPosition, 0] = 1;
+                    break;
+                case "Single Top Middle":
+                    seed[seedPosition, maxSeedSize / 2] = 1;
+                    break;
+                case "Single Top Right":
+                    seed[seedPosition, maxSeedSize - 1] = 1;
+                    break;
+            }
+
+            return seed;
+        }
+
+        private static int GetDelay(Dictionary<string, int> allowedDelays)
+        {
+            string option = UserRequest.GetOption("Select Delay", allowedDelays.Keys.ToArray(), true);
+
+            return allowedDelays[option];
         }
     }
 }

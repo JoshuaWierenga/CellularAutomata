@@ -14,10 +14,7 @@ namespace CellularAutomata.Automata
         private const uint SeedStartRow = 1;
 
         //Rule must be a 16 digit binary number and seed must be a binary number that is shorter than max chars on console row
-        public SecondOrderReversibleCa(int[] rule, int[,] seed, int delay)
-        {
-           Setup(StateHeight, InputCount, SeedStartRow, rule, seed, delay);
-        }
+        public SecondOrderReversibleCa(int[] rule, int[,] seed, int delay) : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay) {}
 
         //Find next row by applying rule to previous row and 2nd previous row
         public override void Iterate()
@@ -37,7 +34,7 @@ namespace CellularAutomata.Automata
 
         public override void Draw()
         {
-            //Should only draw every second iteration, runs on first iteration as seed data contains 2 rows
+            //Should only draw every second iteration, runs before first iteration as seed data contains 2 rows
             if (TimesRan % 2 == 1)
             {
                 return;

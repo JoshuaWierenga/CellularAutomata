@@ -4,7 +4,7 @@ namespace CellularAutomata.Automata
 {
     public class ThreeColourTotalisticCa : CellularAutomata
     {
-        //Elementary ca needs 2 rows, last row + current
+        //Totalistic ca needs 2 rows, last row + current
         private const uint StateHeight = 2;
 
         //Number of possible inputs, sets required rule length, 3*colournum-2, i.e. 3*3-2 = 7 
@@ -23,9 +23,8 @@ namespace CellularAutomata.Automata
             ConsoleColor.Black
         };
 
-        public ThreeColourTotalisticCa(int[] rule, int[,] seed, int delay)
+        public ThreeColourTotalisticCa(int[] rule, int[,] seed, int delay) : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay)
         {
-            Setup(StateHeight, InputCount, SeedStartRow, rule, seed, delay);
             Colours = DefaultColours;
         }
 

@@ -1,5 +1,4 @@
-﻿using System;
-using CellularAutomata.Automata;
+﻿using CellularAutomata.Automata;
 
 namespace CellularAutomata
 {
@@ -51,7 +50,7 @@ namespace CellularAutomata
                     ca.Iterate();
                 }
 
-                ca.Modify(Modification.Direction);
+                //ca.Modify(Modification.Direction);
             }
         }
     }
