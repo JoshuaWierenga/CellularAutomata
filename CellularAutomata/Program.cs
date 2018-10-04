@@ -1,29 +1,38 @@
-﻿using CellularAutomata.Automata;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CellularAutomata.Automata;
 
 namespace CellularAutomata
 {
     internal static class Program
     {
+        private static readonly Dictionary<string, Type> Automata = new Dictionary<string, Type>
+        {
+            {"Elementary Automata", typeof(ElementaryCa)},
+            {"Second Order Reversible Automata", typeof(SecondOrderReversibleCa)},
+            {"Three Colour Totalistic Automata", typeof(ThreeColourTotalisticCa)}
+        };
+
+
         private static void Main(string[] args)
         {
-            //Automata.CellularAutomata ca = new SecondOrderReversibleCa();
-
-            //Automata.CellularAutomata ca = new ElementaryCa();
-
-            Automata.CellularAutomata ca = new ThreeColourTotalisticCa();
+            Automata.CellularAutomata ca = SelectAutomata();
 
             ca.SetupConsole();
 
-            for (int i = 0; i < 500; i++)
+            while (true)
             {
-                for (int j = 0; j < 23; j++)
-                {
-                    ca.Draw();
-                    ca.Iterate();
-                }
-
-                //ca.Modify(Modification.Direction);
+                ca.Draw();
+                ca.Iterate();
             }
+        }
+
+        private static Automata.CellularAutomata SelectAutomata()
+        {
+            string option = UserRequest.GetOption("Select Automata", Automata.Keys.ToArray(), true);
+
+            return (Automata.CellularAutomata)Activator.CreateInstance(Automata[option]);
         }
     }
 }
