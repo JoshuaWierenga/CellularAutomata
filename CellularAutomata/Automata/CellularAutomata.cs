@@ -8,6 +8,8 @@ namespace CellularAutomata.Automata
 {
     public abstract class CellularAutomata
     {
+        public static readonly int MaxSeedSize = Console.WindowWidth - 2 - (Console.WindowWidth - 1) % 2;
+
         protected uint TimesRan { get; set; }
 
         protected int Delay { get; set; }
@@ -190,7 +192,6 @@ namespace CellularAutomata.Automata
                 //Remove rule answer
                 Console.CursorTop = Console.CursorTop - 1;
 
-                //TODO move to base and explain the 2
                 //Get rule from user
                 int number = UserRequest.GetNumber("Rule", (int)Math.Pow(caBase, ruleLength), false);
                 //Convert rule to 8 bit binary number
@@ -210,20 +211,13 @@ namespace CellularAutomata.Automata
         {
             string option = UserRequest.GetOption("Select Initial Row", allowedSeeds.Keys.ToArray(), true);
 
-            //TODO switch to having a set size reguardless of screen width is odd or even or simplify size to single expression
-            int maxSeedSize = Console.WindowWidth - 1;
-            if (maxSeedSize % 2 == 1)
-            {
-                maxSeedSize--;
-            }
-
-            int[,] seed = new int[stateHeight, maxSeedSize];
+            int[,] seed = new int[stateHeight, MaxSeedSize + 1];
 
             foreach (Point point in allowedSeeds[option])
             {
-                if (point.X > maxSeedSize - 1)
+                if (point.X > MaxSeedSize)
                 {
-                    seed[point.Y, maxSeedSize - 1] = 1;
+                    seed[point.Y, MaxSeedSize] = 1;
                 }
                 else
                 {

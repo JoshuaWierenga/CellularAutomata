@@ -27,8 +27,8 @@ namespace CellularAutomata.Automata
         private static readonly Dictionary<string, Point[]> DefaultSeeds = new Dictionary<string, Point[]>
         {
             {"2 Stacked Top Left", new[] {new Point(0, 1), new Point(0, 1) }},
-            {"2 Stacked Top Middle", new []{ new Point((Console.WindowWidth - 2) / 2, 1), new Point((Console.WindowWidth - 2) / 2, 2)}},
-            {"2 Stacked Top Right", new []{ new Point(Console.WindowWidth - 2, 1), new Point(Console.WindowWidth - 2, 2)}}
+            {"2 Stacked Top Middle", new []{ new Point(MaxSeedSize/2, 1), new Point(MaxSeedSize/2, 2)}},
+            {"2 Stacked Top Right", new []{ new Point(MaxSeedSize, 1), new Point(MaxSeedSize, 2)}}
         };
 
         public SecondOrderReversibleCa() : base(StateHeight, InputCount, DefaultRules, CAbase, DefaultSeeds) {}
@@ -39,6 +39,11 @@ namespace CellularAutomata.Automata
         //Find next row by applying rule to previous row and 2nd previous row
         public override void Iterate()
         {
+            if (!Running)
+            {
+                return;
+            }
+
             base.Iterate();
 
             for (uint i = 1; i < State.GetLength(1) - 1; i++)

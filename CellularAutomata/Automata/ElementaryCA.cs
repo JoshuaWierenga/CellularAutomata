@@ -28,8 +28,8 @@ namespace CellularAutomata.Automata
         private static readonly Dictionary<string, Point[]> DefaultSeeds = new Dictionary<string, Point[]>
         {
             {"Single Top Left", new[] {new Point(0, 1)}},
-            {"Single Top Middle", new []{ new Point((Console.WindowWidth - 2)/2, 1)}},
-            {"Single Top Right", new []{ new Point(Console.WindowWidth - 2, 1)}}
+            {"Single Top Middle", new []{ new Point(MaxSeedSize/2, 1)}},
+            {"Single Top Right", new []{ new Point(MaxSeedSize, 1)}}
         };
 
         public ElementaryCa() : base(StateHeight, InputCount, DefaultRules, CAbase, DefaultSeeds) {}

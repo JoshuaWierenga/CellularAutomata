@@ -30,8 +30,10 @@ namespace CellularAutomata
 
         private static Automata.CellularAutomata SelectAutomata()
         {
+            //Ask user to pick automata
             string option = UserRequest.GetOption("Select Automata", Automata.Keys.ToArray(), true);
 
+            //Create instance of selected automata
             return (Automata.CellularAutomata)Activator.CreateInstance(Automata[option]);
         }
     }
