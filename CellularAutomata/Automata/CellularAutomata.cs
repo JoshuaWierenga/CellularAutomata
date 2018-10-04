@@ -8,6 +8,7 @@ namespace CellularAutomata.Automata
 {
     public abstract class CellularAutomata
     {
+        //Stores maximum CA size, sometimes 1 less than maximum size to ensure it is an odd number so that there is a middle
         public static readonly int MaxSeedSize = Console.WindowWidth - 2 - (Console.WindowWidth - 1) % 2;
 
         protected uint TimesRan { get; set; }
@@ -41,7 +42,7 @@ namespace CellularAutomata.Automata
 
         //Height controls height of state array, input count is the number of inputs possible and controls rule length
         //and seed position controls y position to begin placing seed
-        protected CellularAutomata(uint stateHeight, uint inputCount, Dictionary<string, int[]> allowedRules,
+        protected CellularAutomata(uint stateHeight, int inputCount, Dictionary<string, int[]> allowedRules,
             int caBase, Dictionary<string, Point[]> allowedSeeds)
         {        
             Rule = GetRule(allowedRules, inputCount, caBase);
@@ -180,7 +181,7 @@ namespace CellularAutomata.Automata
             }
         }
 
-        private static int[] GetRule(Dictionary<string, int[]> allowedRules, uint ruleLength, int caBase)
+        private static int[] GetRule(Dictionary<string, int[]> allowedRules, int ruleLength, int caBase)
         {
             string option = UserRequest.GetOption("Select Rule", allowedRules.Keys.ToArray(), true);
             int[] rule = allowedRules[option];
@@ -188,18 +189,21 @@ namespace CellularAutomata.Automata
             if (option == "Manual Rule")
             {
                 //Reset rule
-                rule = new int[8];
+                rule = new int[ruleLength];
                 //Remove rule answer
                 Console.CursorTop = Console.CursorTop - 1;
 
+                int maxNumber = (int)Math.Pow(caBase, ruleLength) - 1;
+
                 //Get rule from user
-                int number = UserRequest.GetNumber("Rule", (int)Math.Pow(caBase, ruleLength), false);
-                //Convert rule to 8 bit binary number
-                string numberBinary = Convert.ToString(number, caBase).PadLeft(8, '0');
+                Console.WriteLine("Rule should be entered as a 1 to " + Math.Ceiling(Math.Log10(maxNumber)) + " digit number between " + 0 + " and " + maxNumber);
+                int numberDecimal = UserRequest.GetNumber("Rule", maxNumber + 1, false);
+                //Convert rule to a number as long as ruleLength in base caBase
+                string numberBase = IntExtensions.BaseChange(numberDecimal, caBase).PadLeft(ruleLength, '0');
                 //Store rule in rule var in reverse order
-                for (int i = 0; i < numberBinary.Length; i++)
+                for (int i = 0; i < numberBase.Length; i++)
                 {
-                    rule[ruleLength - 1 - i] = int.Parse(numberBinary[i].ToString());
+                    rule[ruleLength - 1 - i] = int.Parse(numberBase[i].ToString());
                 }
             }
 

@@ -13,7 +13,7 @@ namespace CellularAutomata.Automata
         private const uint StateHeight = 2;
 
         //Number of possible inputs, sets required rule length, 3*colournum-2, i.e. 3*3-2 = 7 
-        private const uint InputCount = 7;
+        private const int InputCount = 7;
 
         //Position to store seed in, Stores seed in current row
         private const uint SeedStartRow = 1;

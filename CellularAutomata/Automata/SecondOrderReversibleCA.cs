@@ -13,14 +13,14 @@ namespace CellularAutomata.Automata
         private const uint StateHeight = 3;
 
         //Number of possible inputs, sets required rule length
-        private const uint InputCount = 16;
+        private const int InputCount = 16;
 
         //Position to start storing seed in, Stores seed in previous row + current row,
         private const uint SeedStartRow = 1;
 
         private static readonly Dictionary<string, int[]> DefaultRules = new Dictionary<string, int[]>
         {
-            {"Rule 30R", new[]{0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1}},
+            {"Rule 57630(30R)", new[]{0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1}},
             {"Manual Rule", new[]{0} }
         };
 
