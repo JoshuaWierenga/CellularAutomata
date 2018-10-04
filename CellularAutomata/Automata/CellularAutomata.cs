@@ -43,7 +43,7 @@ namespace CellularAutomata.Automata
         //Height controls height of state array, input count is the number of inputs possible and controls rule length
         //and seed position controls y position to begin placing seed
         protected CellularAutomata(uint stateHeight, int inputCount, Dictionary<string, int[]> allowedRules,
-            int caBase, Dictionary<string, Point[]> allowedSeeds)
+            int caBase, Dictionary<string, Dictionary<Point, int>> allowedSeeds)
         {        
             Rule = GetRule(allowedRules, inputCount, caBase);
             State = GetSeed(allowedSeeds, stateHeight);
@@ -186,46 +186,48 @@ namespace CellularAutomata.Automata
             string option = UserRequest.GetOption("Select Rule", allowedRules.Keys.ToArray(), true);
             int[] rule = allowedRules[option];
 
-            if (option == "Manual Rule")
+            if (option != "Manual Rule") return rule;
+
+            //Reset rule
+            rule = new int[ruleLength];
+            //Remove rule answer
+            Console.CursorTop--;
+
+            int maxNumber = (int)Math.Pow(caBase, ruleLength) - 1;
+
+            //Get rule from user
+            Console.WriteLine("Rule should be entered as a 1 to " + Math.Ceiling(Math.Log10(maxNumber)) + " digit number between " + 0 + " and " + maxNumber);
+            int numberDecimal = UserRequest.GetNumber("Rule", maxNumber + 1, false);
+            //Convert rule to a number as long as ruleLength in base caBase
+            string numberBase = IntExtensions.BaseChange(numberDecimal, caBase).PadLeft(ruleLength, '0');
+            //Store rule in rule var in reverse order
+            for (int i = 0; i < numberBase.Length; i++)
             {
-                //Reset rule
-                rule = new int[ruleLength];
-                //Remove rule answer
-                Console.CursorTop = Console.CursorTop - 1;
-
-                int maxNumber = (int)Math.Pow(caBase, ruleLength) - 1;
-
-                //Get rule from user
-                Console.WriteLine("Rule should be entered as a 1 to " + Math.Ceiling(Math.Log10(maxNumber)) + " digit number between " + 0 + " and " + maxNumber);
-                int numberDecimal = UserRequest.GetNumber("Rule", maxNumber + 1, false);
-                //Convert rule to a number as long as ruleLength in base caBase
-                string numberBase = IntExtensions.BaseChange(numberDecimal, caBase).PadLeft(ruleLength, '0');
-                //Store rule in rule var in reverse order
-                for (int i = 0; i < numberBase.Length; i++)
-                {
-                    rule[ruleLength - 1 - i] = int.Parse(numberBase[i].ToString());
-                }
+                rule[ruleLength - 1 - i] = int.Parse(numberBase[i].ToString());
             }
 
             return rule;
         }
 
         //TODO allow manual seed entry
-        private static int[,] GetSeed(Dictionary<string, Point[]> allowedSeeds, uint stateHeight)
+        private static int[,] GetSeed(Dictionary<string, Dictionary<Point, int>> allowedSeeds, uint stateHeight)
         {
+            //Get seed from user
             string option = UserRequest.GetOption("Select Initial Row", allowedSeeds.Keys.ToArray(), true);
 
+            //Create array for seed, width has + 1 as width should be 0 to MaxSeedSize
             int[,] seed = new int[stateHeight, MaxSeedSize + 1];
 
-            foreach (Point point in allowedSeeds[option])
+            foreach (KeyValuePair<Point, int> point in allowedSeeds[option])
             {
-                if (point.X > MaxSeedSize)
+                //Stores the int value in seed[y, x] unless x > console width then just use console width
+                if (point.Key.X > MaxSeedSize)
                 {
-                    seed[point.Y, MaxSeedSize] = 1;
+                    seed[point.Key.Y, MaxSeedSize] = point.Value;
                 }
                 else
                 {
-                    seed[point.Y, point.X] = 1;
+                    seed[point.Key.Y, point.Key.X] = point.Value;
                 }
                 
             }

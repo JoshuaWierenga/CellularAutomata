@@ -24,11 +24,11 @@ namespace CellularAutomata.Automata
             {"Manual Rule", new[]{0} }
         };
 
-        private static readonly Dictionary<string, Point[]> DefaultSeeds = new Dictionary<string, Point[]>
+        private static readonly Dictionary<string, Dictionary<Point, int>> DefaultSeeds = new Dictionary<string, Dictionary<Point, int>>
         {
-            {"2 Stacked Top Left", new[] {new Point(0, 1), new Point(0, 1) }},
-            {"2 Stacked Top Middle", new []{ new Point(MaxSeedSize/2, 1), new Point(MaxSeedSize/2, 2)}},
-            {"2 Stacked Top Right", new []{ new Point(MaxSeedSize, 1), new Point(MaxSeedSize, 2)}}
+            {"2 Stacked Top Left", new Dictionary<Point, int> {{new Point(0, 1), 1}, {new Point(0, 2), 1}}},
+            {"2 Stacked Top Middle", new Dictionary<Point, int> {{new Point(MaxSeedSize/2, 1), 1}, {new Point(MaxSeedSize/2, 2), 1}}},
+            {"2 Stacked Top Right", new Dictionary<Point, int> {{new Point(MaxSeedSize, 1), 1}, {new Point(MaxSeedSize, 2), 1}}},
         };
 
         public SecondOrderReversibleCa() : base(StateHeight, InputCount, DefaultRules, CAbase, DefaultSeeds) {}

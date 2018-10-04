@@ -14,7 +14,6 @@ namespace CellularAutomata
             {"Three Colour Totalistic Automata", typeof(ThreeColourTotalisticCa)}
         };
 
-
         private static void Main(string[] args)
         {
             Automata.CellularAutomata ca = SelectAutomata();

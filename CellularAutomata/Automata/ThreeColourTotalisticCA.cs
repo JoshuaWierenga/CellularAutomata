@@ -34,11 +34,15 @@ namespace CellularAutomata.Automata
             {"Manual Rule", new[]{0} }
         };
 
-        private static readonly Dictionary<string, Point[]> DefaultSeeds = new Dictionary<string, Point[]>
+        private static readonly Dictionary<string, Dictionary<Point, int>> DefaultSeeds = new Dictionary<string, Dictionary<Point, int>>
         {
-            {"Single Top Left", new[] {new Point(0, 1)}},
-            {"Single Top Middle", new []{ new Point(MaxSeedSize/2, 1)}},
-            {"Single Top Right", new []{ new Point(MaxSeedSize, 1)}}
+            {"Single 1 Top Left", new Dictionary<Point, int> {{new Point(0, 1), 1}}},
+            {"Single 1 Top Middle", new Dictionary<Point, int> {{new Point(MaxSeedSize/2, 1), 1}}},
+            {"Single 1 Top Right", new Dictionary<Point, int> {{new Point(MaxSeedSize, 1), 1}}},
+            {"Single 2 Top Left", new Dictionary<Point, int> {{new Point(0, 1), 2}}},
+            {"Single 2 Top Middle", new Dictionary<Point, int> {{new Point(MaxSeedSize/2, 1), 2}}},
+            {"Single 2 Top Right", new Dictionary<Point, int> {{new Point(MaxSeedSize, 1), 2}}}
+
         };
 
         public ThreeColourTotalisticCa() : base(StateHeight, InputCount, DefaultRules, CAbase, DefaultSeeds)
