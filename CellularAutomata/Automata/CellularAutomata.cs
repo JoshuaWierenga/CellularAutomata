@@ -19,7 +19,6 @@ namespace CellularAutomata.Automata
         protected int[] Rule { get; }
 
         //Default colours used by CAs
-        //TODO fix crashing when ca base != 2 and colours have not been changed
         protected ConsoleColor[] Colours =
         {
             ConsoleColor.White,

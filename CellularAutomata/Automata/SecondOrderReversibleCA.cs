@@ -45,7 +45,7 @@ namespace CellularAutomata.Automata
             {
                 //Concatinate ints and convert to binary
                 string total = State[0, i].ToString() + State[1, i - 1] + State[1, i] + State[1, i + 1];
-                int totalBinary = Convert.ToInt32(total, 2);
+                int totalBinary = Convert.ToInt32(total, CAbase);
 
                 //Set new cell to rule for totalBinary
                 State[2, i] = Rule[totalBinary];
