@@ -18,10 +18,18 @@ namespace CellularAutomata.Automata
         //Position to start storing seed in, Stores seed in previous row + current row,
         private const uint SeedStartRow = 1;
 
+        //Stores colours used for cells
+        private static readonly ConsoleColor[] DefaultColours = {
+            //Used for cells with a value of 0
+            ConsoleColor.White,
+            //Used for cells with a value of 1
+            ConsoleColor.Black
+        };
+
         private static readonly Dictionary<string, int[]> DefaultRules = new Dictionary<string, int[]>
         {
             {"Rule 57630(30R)", new[]{0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1}},
-            {"Manual Rule", new[]{0} }
+            {"Manual Rule", null}
         };
 
         private static readonly Dictionary<string, Dictionary<Point, int>> DefaultSeeds = new Dictionary<string, Dictionary<Point, int>>
@@ -29,14 +37,15 @@ namespace CellularAutomata.Automata
             {"2 Stacked Top Left", new Dictionary<Point, int> {{new Point(0, 1), 1}, {new Point(0, 2), 1}}},
             {"2 Stacked Top Middle", new Dictionary<Point, int> {{new Point(MaxSeedSize/2, 1), 1}, {new Point(MaxSeedSize/2, 2), 1}}},
             {"2 Stacked Top Right", new Dictionary<Point, int> {{new Point(MaxSeedSize, 1), 1}, {new Point(MaxSeedSize, 2), 1}}},
+            {"Manual Seed", null}
         };
 
-        public SecondOrderReversibleCa() : base(StateHeight, InputCount, DefaultRules, CAbase, DefaultSeeds) {}
+        public SecondOrderReversibleCa() : base(StateHeight, InputCount,SeedStartRow, DefaultRules, CAbase, DefaultSeeds, DefaultColours) {}
 
         //Rule must be a 16 digit binary number and seed must be a binary number that is shorter than max chars on console row
-        public SecondOrderReversibleCa(int[] rule, int[,] seed, int delay) : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay) {}
+        public SecondOrderReversibleCa(int[] rule, int[,] seed, int delay) : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay, DefaultColours) {}
 
-        //Find next row by applying rule to previous row and 2nd previous row
+        //Find next row by applying rule to previous rows
         public override void Iterate()
         {
             if (!Running)
@@ -57,6 +66,7 @@ namespace CellularAutomata.Automata
             }
         }
 
+        //Draws last row + current as squares by using the unicode block elements
         public override void Draw()
         {
             //Should only draw every second iteration, runs before first iteration as seed data contains 2 rows

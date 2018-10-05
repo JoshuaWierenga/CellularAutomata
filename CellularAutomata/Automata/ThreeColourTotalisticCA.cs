@@ -31,7 +31,7 @@ namespace CellularAutomata.Automata
         private static readonly Dictionary<string, int[]> DefaultRules = new Dictionary<string, int[]>
         {
             {"Code 777", new[]{0, 1, 2, 1, 0, 0, 1}},
-            {"Manual Rule", new[]{0} }
+            {"Manual Rule", null}
         };
 
         private static readonly Dictionary<string, Dictionary<Point, int>> DefaultSeeds = new Dictionary<string, Dictionary<Point, int>>
@@ -41,16 +41,16 @@ namespace CellularAutomata.Automata
             {"Single 1 Top Right", new Dictionary<Point, int> {{new Point(MaxSeedSize, 1), 1}}},
             {"Single 2 Top Left", new Dictionary<Point, int> {{new Point(0, 1), 2}}},
             {"Single 2 Top Middle", new Dictionary<Point, int> {{new Point(MaxSeedSize/2, 1), 2}}},
-            {"Single 2 Top Right", new Dictionary<Point, int> {{new Point(MaxSeedSize, 1), 2}}}
-
+            {"Single 2 Top Right", new Dictionary<Point, int> {{new Point(MaxSeedSize, 1), 2}}},
+            {"Manual Seed", null}
         };
 
-        public ThreeColourTotalisticCa() : base(StateHeight, InputCount, DefaultRules, CAbase, DefaultSeeds)
+        public ThreeColourTotalisticCa() : base(StateHeight, InputCount, SeedStartRow, DefaultRules, CAbase, DefaultSeeds, DefaultColours)
         {
             Colours = DefaultColours;
         }
 
-        public ThreeColourTotalisticCa(int[] rule, int[,] seed, int delay) : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay)
+        public ThreeColourTotalisticCa(int[] rule, int[,] seed, int delay) : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay, DefaultColours)
         {
             Colours = DefaultColours;
         }
@@ -75,6 +75,7 @@ namespace CellularAutomata.Automata
             }
         }
 
+        //Draws last row + current as squares by using the unicode block elements
         public override void Draw()
         {
             //Should only draw every second iteration, waits until after first iteration as seed data only contains 1 row

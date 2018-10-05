@@ -18,24 +18,33 @@ namespace CellularAutomata.Automata
         //Position to store seed in, 1 stores seed in current row
         private const uint SeedStartRow = 1;
 
+        //Stores colours used for cells
+        private static readonly ConsoleColor[] DefaultColours = {
+            //Used for cells with a value of 0
+            ConsoleColor.White,
+            //Used for cells with a value of 1
+            ConsoleColor.Black
+        };
+
         private static readonly Dictionary<string, int[]> DefaultRules = new Dictionary<string, int[]>
         {
             {"Rule 102", new[]{0, 1, 1, 0, 0, 1, 1, 0}},
             {"Rule 110", new[]{0, 1, 1, 1, 0, 1, 1, 0}},
-            {"Manual Rule", new[]{0} }
+            {"Manual Rule", null}
         };
 
         private static readonly Dictionary<string, Dictionary<Point, int>> DefaultSeeds = new Dictionary<string, Dictionary<Point, int>>
         {
             {"Single Top Left", new Dictionary<Point, int> {{new Point(0, 1), 1}}},
             {"Single Top Middle", new Dictionary<Point, int> {{new Point(MaxSeedSize/2, 1), 1}}},
-            {"Single Top Right", new Dictionary<Point, int> {{new Point(MaxSeedSize, 1), 1}}}
+            {"Single Top Right", new Dictionary<Point, int> {{new Point(MaxSeedSize, 1), 1}}},
+            {"Manual Seed", null}
         };
 
-        public ElementaryCa() : base(StateHeight, InputCount, DefaultRules, CAbase, DefaultSeeds) {}
+        public ElementaryCa() : base(StateHeight, InputCount, SeedStartRow, DefaultRules, CAbase, DefaultSeeds, DefaultColours) {}
 
         //Rule must be an 8 digit binary number and seed must be a binary number that is shorter than current console width
-        public ElementaryCa(int[] rule, int[,] seed, int delay) : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay) {}
+        public ElementaryCa(int[] rule, int[,] seed, int delay) : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay, DefaultColours) {}
 
         //Find next row by applying rule to previous row
         public override void Iterate()

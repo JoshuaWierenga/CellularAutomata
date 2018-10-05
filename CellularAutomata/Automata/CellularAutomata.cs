@@ -22,11 +22,7 @@ namespace CellularAutomata.Automata
         protected int[] Rule { get; }
 
         //Default colours used by CAs
-        protected ConsoleColor[] Colours =
-        {
-            ConsoleColor.White,
-            ConsoleColor.Black
-        };
+        protected ConsoleColor[] Colours { get; set; }
 
         //Whether or not the program can iterate
         protected bool Running { get; set; }
@@ -42,19 +38,22 @@ namespace CellularAutomata.Automata
 
         //Height controls height of state array, input count is the number of inputs possible and controls rule length
         //and seed position controls y position to begin placing seed
-        protected CellularAutomata(uint stateHeight, int inputCount, Dictionary<string, int[]> allowedRules,
-            int caBase, Dictionary<string, Dictionary<Point, int>> allowedSeeds)
-        {        
+        protected CellularAutomata(uint stateHeight, int inputCount, uint seedPosition,
+            Dictionary<string, int[]> allowedRules, int caBase, Dictionary<string, Dictionary<Point, int>> allowedSeeds,
+            ConsoleColor[] colours)
+        {
+            Colours = colours;
             Rule = GetRule(allowedRules, inputCount, caBase);
-            State = GetSeed(allowedSeeds, stateHeight);
             Delay = GetDelay(DefaultDelays);
+            State = GetSeed(allowedSeeds, caBase, stateHeight, seedPosition);
             Running = true;
         }
 
         //Height controls height of state array, input count is the number of inputs possible and controls rule length
         //and seed position controls y position to begin placing seed
         //#TODO limit max rule to prevent entering non existant rules
-        protected CellularAutomata(uint stateHeight, uint inputCount, uint seedPosition, int[] rule, int[,] seed, int delay)
+        protected CellularAutomata(uint stateHeight, uint inputCount, uint seedPosition, int[] rule, int[,] seed,
+            int delay, ConsoleColor[] colours)
         {
             if (rule.Length != inputCount)
             {
@@ -65,6 +64,8 @@ namespace CellularAutomata.Automata
             {
                 throw new ArgumentOutOfRangeException(nameof(seed), "Seed can only be as long as the console's width");
             }
+
+            Colours = colours;
 
             Rule = rule;
 
@@ -83,6 +84,7 @@ namespace CellularAutomata.Automata
             Running = true;
         }
 
+        //Find next row by applying rule to previous row(s)
         public virtual void Iterate()
         {
             if (!Running)
@@ -100,6 +102,7 @@ namespace CellularAutomata.Automata
             State[State.GetLength(0) - 1, State.GetLength(1) - 1] = State[0, State.GetLength(1) - 1];
         }
 
+        //Draws last row + current as squares by using the unicode block elements
         public virtual void Draw()
         {
             Thread.Sleep(Delay);
@@ -138,7 +141,7 @@ namespace CellularAutomata.Automata
                     if (arguments != null)
                     {
                         //Allows change colour at position
-                        if (arguments.Length == 2 && arguments[0] is int position 
+                        if (arguments.Length == 2 && arguments[0] is int position
                                                   && arguments[1] is ConsoleColor positionColour)
                         {
                             Colours[position] = positionColour;
@@ -209,8 +212,7 @@ namespace CellularAutomata.Automata
             return rule;
         }
 
-        //TODO allow manual seed entry
-        private static int[,] GetSeed(Dictionary<string, Dictionary<Point, int>> allowedSeeds, uint stateHeight)
+        private int[,] GetSeed(Dictionary<string, Dictionary<Point, int>> allowedSeeds, int maxSeedValue, uint stateHeight, uint seedStart)
         {
             //Get seed from user
             string option = UserRequest.GetOption("Select Initial Row", allowedSeeds.Keys.ToArray(), true);
@@ -218,18 +220,66 @@ namespace CellularAutomata.Automata
             //Create array for seed, width has + 1 as width should be 0 to MaxSeedSize
             int[,] seed = new int[stateHeight, MaxSeedSize + 1];
 
-            foreach (KeyValuePair<Point, int> point in allowedSeeds[option])
+            if (option == "Manual Seed")
             {
-                //Stores the int value in seed[y, x] unless x > console width then just use console width
-                if (point.Key.X > MaxSeedSize)
+                //Clear console and enable cursor
+                SetupConsole();
+                Console.CursorVisible = true;
+                while (Console.CursorVisible)
                 {
-                    seed[point.Key.Y, MaxSeedSize] = point.Value;
+                    ConsoleKeyInfo pressedKey = Console.ReadKey(true);
+
+                    //Move cursor or end while loop
+                    switch (pressedKey.Key)
+                    {
+                        case ConsoleKey.UpArrow when Console.CursorTop > 0:
+                            Console.CursorTop--;
+                            break;
+                        case ConsoleKey.DownArrow when Console.CursorTop < stateHeight - seedStart - 1:
+                            Console.CursorTop++;
+                            break;
+                        case ConsoleKey.LeftArrow when Console.CursorLeft > 0:
+                            Console.CursorLeft--;
+                            break;
+                        case ConsoleKey.RightArrow when Console.CursorLeft < MaxSeedSize:
+                            Console.CursorLeft++;
+                            break;
+                        case ConsoleKey.Enter:
+                            Console.CursorVisible = false;
+                            break;
+                    }
+
+                    //check if pressed char is a number
+                    int pressedNumber = pressedKey.KeyChar - 48;
+                    if (pressedNumber < 0 || pressedNumber >= maxSeedValue) continue;
+
+                    //Keep backup of cursor position
+                    int cursorX = Console.CursorLeft;
+                    int cursorY = Console.CursorTop;
+                    //Update seed
+                    seed[seedStart + cursorY, cursorX] = pressedNumber;
+                    //Update console and put cursor one right of last position
+                    Console.BackgroundColor = Colours[pressedNumber];
+                    Console.WriteLine(' ');
+                    Console.CursorTop = cursorY;
+                    Console.CursorLeft = cursorX + 1;
                 }
-                else
+            }
+            else
+            {
+                foreach (KeyValuePair<Point, int> point in allowedSeeds[option])
                 {
-                    seed[point.Key.Y, point.Key.X] = point.Value;
+                    //Stores the int value in seed[y, x] unless x > console width then just use console width
+                    if (point.Key.X > MaxSeedSize)
+                    {
+                        seed[point.Key.Y, MaxSeedSize] = point.Value;
+                    }
+                    else
+                    {
+                        seed[point.Key.Y, point.Key.X] = point.Value;
+                    }
+
                 }
-                
             }
 
             return seed;
