@@ -12,7 +12,7 @@ namespace CellularAutomata.Automata
         //Totalistic ca needs 2 rows, last row + current
         private const uint StateHeight = 2;
 
-        //Number of possible inputs, sets required rule length, 3*colournum-2, i.e. 3*3-2 = 7 
+        //Number of possible inputs, sets required rule length, 3*colournum-2, i.e. 3*3-2 = 7
         private const int InputCount = 7;
 
         //Position to store seed in, Stores seed in current row
@@ -45,12 +45,12 @@ namespace CellularAutomata.Automata
             {"Manual Seed", null}
         };
 
-        public ThreeColourTotalisticCa() : base(StateHeight, InputCount, SeedStartRow, DefaultRules, CAbase, DefaultSeeds, DefaultColours)
+        public ThreeColourTotalisticCa(Device.Device device) : base(StateHeight, InputCount, SeedStartRow, device, DefaultRules, CAbase, DefaultSeeds, DefaultColours)
         {
             Colours = DefaultColours;
         }
 
-        public ThreeColourTotalisticCa(int[] rule, int[,] seed, int delay) : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay, DefaultColours)
+        public ThreeColourTotalisticCa(int[] rule, int[,] seed, int delay, Device.Device device) : base(StateHeight, InputCount, SeedStartRow, device, rule, seed, delay, DefaultColours)
         {
             Colours = DefaultColours;
         }

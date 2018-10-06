@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CellularAutomata.Automata;
+using CellularAutomata.Device;
 
 namespace CellularAutomata
 {
@@ -16,7 +17,9 @@ namespace CellularAutomata
 
         private static void Main(string[] args)
         {
-            Automata.CellularAutomata ca = SelectAutomata();
+            Device.Device device = new ConsoleAndKeyboard();
+
+            Automata.CellularAutomata ca = SelectAutomata(device);
 
             ca.SetupConsole();
 
@@ -27,13 +30,14 @@ namespace CellularAutomata
             }
         }
 
-        private static Automata.CellularAutomata SelectAutomata()
+        private static Automata.CellularAutomata SelectAutomata(Device.Device device)
         {
             //Ask user to pick automata
-            string option = UserRequest.GetOption("Select Automata", Automata.Keys.ToArray(), true);
+            //TODO mention this is the time to set size of console window
+            string option = device.GetOption("Select Automata", Automata.Keys.ToArray(), true);
 
             //Create instance of selected automata
-            return (Automata.CellularAutomata)Activator.CreateInstance(Automata[option]);
+            return (Automata.CellularAutomata)Activator.CreateInstance(Automata[option], device);
         }
     }
 }

@@ -40,10 +40,10 @@ namespace CellularAutomata.Automata
             {"Manual Seed", null}
         };
 
-        public SecondOrderReversibleCa() : base(StateHeight, InputCount,SeedStartRow, DefaultRules, CAbase, DefaultSeeds, DefaultColours) {}
+        public SecondOrderReversibleCa(Device.Device device) : base(StateHeight, InputCount,SeedStartRow, device, DefaultRules, CAbase, DefaultSeeds, DefaultColours) {}
 
         //Rule must be a 16 digit binary number and seed must be a binary number that is shorter than max chars on console row
-        public SecondOrderReversibleCa(int[] rule, int[,] seed, int delay) : base(StateHeight, InputCount, SeedStartRow, rule, seed, delay, DefaultColours) {}
+        public SecondOrderReversibleCa(int[] rule, int[,] seed, int delay, Device.Device device) : base(StateHeight, InputCount, SeedStartRow, device, rule, seed, delay, DefaultColours) {}
 
         //Find next row by applying rule to previous rows
         public override void Iterate()

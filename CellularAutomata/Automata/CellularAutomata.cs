@@ -36,13 +36,16 @@ namespace CellularAutomata.Automata
             {"Very Slow (200ms)", 200}
         };
 
+        private readonly Device.Device _device;
+
         //Height controls height of state array, input count is the number of inputs possible and controls rule length
         //and seed position controls y position to begin placing seed
-        protected CellularAutomata(uint stateHeight, int inputCount, uint seedPosition,
+        protected CellularAutomata(uint stateHeight, int inputCount, uint seedPosition, Device.Device device,
             Dictionary<string, int[]> allowedRules, int caBase, Dictionary<string, Dictionary<Point, int>> allowedSeeds,
             ConsoleColor[] colours)
         {
             Colours = colours;
+            _device = device;
             Rule = GetRule(allowedRules, inputCount, caBase);
             Delay = GetDelay(DefaultDelays);
             State = GetSeed(allowedSeeds, caBase, stateHeight, seedPosition);
@@ -52,9 +55,9 @@ namespace CellularAutomata.Automata
         //Height controls height of state array, input count is the number of inputs possible and controls rule length
         //and seed position controls y position to begin placing seed
         //#TODO limit max rule to prevent entering non existant rules
-        protected CellularAutomata(uint stateHeight, uint inputCount, uint seedPosition, int[] rule, int[,] seed,
-            int delay, ConsoleColor[] colours)
-        {
+        protected CellularAutomata(uint stateHeight, uint inputCount, uint seedPosition, Device.Device device,
+            int[] rule, int[,] seed, int delay, ConsoleColor[] colours)
+        {        
             if (rule.Length != inputCount)
             {
                 throw new ArgumentOutOfRangeException(nameof(rule), "Rule must contain exactly " + inputCount + " digits");
@@ -66,9 +69,8 @@ namespace CellularAutomata.Automata
             }
 
             Colours = colours;
-
+            _device = device;
             Rule = rule;
-
             State = new int[stateHeight, seed.GetLength(1)];
 
             for (uint i = 0; i < seed.GetLength(0); i++)
@@ -184,9 +186,9 @@ namespace CellularAutomata.Automata
             }
         }
 
-        private static int[] GetRule(Dictionary<string, int[]> allowedRules, int ruleLength, int caBase)
+        private int[] GetRule(Dictionary<string, int[]> allowedRules, int ruleLength, int caBase)
         {
-            string option = UserRequest.GetOption("Select Rule", allowedRules.Keys.ToArray(), true);
+            string option = _device.GetOption("Select Rule", allowedRules.Keys.ToArray(), true);
             int[] rule = allowedRules[option];
 
             if (option != "Manual Rule") return rule;
@@ -194,13 +196,14 @@ namespace CellularAutomata.Automata
             //Reset rule
             rule = new int[ruleLength];
             //Remove rule answer
-            Console.CursorTop--;
+            _device.CursorTop--;
 
             int maxNumber = (int)Math.Pow(caBase, ruleLength) - 1;
 
             //Get rule from user
-            Console.WriteLine("Rule should be entered as a 1 to " + Math.Ceiling(Math.Log10(maxNumber)) + " digit number between " + 0 + " and " + maxNumber);
-            int numberDecimal = UserRequest.GetNumber("Rule", maxNumber + 1, false);
+            //TODO shorten string
+            _device.WriteLine("Rule should be entered as a 1 to " + Math.Ceiling(Math.Log10(maxNumber)) + " digit number between " + 0 + " and " + maxNumber);
+            int numberDecimal = _device.GetNumber("Rule", maxNumber + 1, false);
             //Convert rule to a number as long as ruleLength in base caBase
             string numberBase = IntExtensions.BaseChange(numberDecimal, caBase).PadLeft(ruleLength, '0');
             //Store rule in rule var in reverse order
@@ -215,19 +218,22 @@ namespace CellularAutomata.Automata
         private int[,] GetSeed(Dictionary<string, Dictionary<Point, int>> allowedSeeds, int maxSeedValue, uint stateHeight, uint seedStart)
         {
             //Get seed from user
-            string option = UserRequest.GetOption("Select Initial Row", allowedSeeds.Keys.ToArray(), true);
+            //TODO change request to make sense for reversible CA
+            string option = _device.GetOption("Select Initial Row", allowedSeeds.Keys.ToArray(), true);
 
             //Create array for seed, width has + 1 as width should be 0 to MaxSeedSize
             int[,] seed = new int[stateHeight, MaxSeedSize + 1];
 
             if (option == "Manual Seed")
             {
+                //TODO tell user how seed should be entered
                 //Clear console and enable cursor
                 SetupConsole();
                 Console.CursorVisible = true;
+
                 while (Console.CursorVisible)
                 {
-                    ConsoleKeyInfo pressedKey = Console.ReadKey(true);
+                   ConsoleKeyInfo pressedKey = _device.ReadKey(true);
 
                     //Move cursor or end while loop
                     switch (pressedKey.Key)
@@ -278,16 +284,15 @@ namespace CellularAutomata.Automata
                     {
                         seed[point.Key.Y, point.Key.X] = point.Value;
                     }
-
                 }
             }
 
             return seed;
         }
 
-        private static int GetDelay(Dictionary<string, int> allowedDelays)
+        private int GetDelay(Dictionary<string, int> allowedDelays)
         {
-            string option = UserRequest.GetOption("Select Delay", allowedDelays.Keys.ToArray(), true);
+            string option = _device.GetOption("Select Delay", allowedDelays.Keys.ToArray(), true);
 
             return allowedDelays[option];
         }

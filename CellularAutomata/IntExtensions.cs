@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CellularAutomata
+﻿namespace CellularAutomata
 {
     public static class IntExtensions
     {

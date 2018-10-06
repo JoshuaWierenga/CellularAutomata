@@ -53,10 +53,11 @@
     <Compile Include="Automata\Modification.cs" />
     <Compile Include="Automata\SecondOrderReversibleCA.cs" />
     <Compile Include="Automata\ThreeColourTotalisticCA.cs" />
+    <Compile Include="Device\Device.cs" />
+    <Compile Include="Device\ConsoleAndKeyboard.cs" />
     <Compile Include="IntExtensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
