@@ -58,7 +58,7 @@ namespace CellularAutomata.Automata
 
             for (uint i = 1; i < State.GetLength(1) - 1; i++)
             {
-                //Concatinate ints and convert to binary
+                //Concatenate ints and convert to binary
                 string total = State[0, i - 1].ToString() + State[0, i] + State[0, i + 1];
                 int totalBinary = Convert.ToInt32(total, CAbase);
 

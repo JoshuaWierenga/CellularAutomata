@@ -17,6 +17,7 @@ namespace CellularAutomata
 
         private static void Main(string[] args)
         {
+            //Device.Device device = new PiLcdAndKeypad(0x27, PiLcdAndKeypad.SetupPcf8574Connection(0x27));
             Device.Device device = new ConsoleAndKeyboard();
 
             Automata.CellularAutomata ca = SelectAutomata(device);

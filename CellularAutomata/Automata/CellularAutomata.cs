@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
+using CellularAutomata.Device;
 
 namespace CellularAutomata.Automata
 {
@@ -131,6 +132,7 @@ namespace CellularAutomata.Automata
             Console.BackgroundColor = Colours[0];
             Console.CursorVisible = false;
             Console.Clear();
+            _device.Clear();
         }
 
         //Allows modification of CA once it has started, to e.g. change delay, reverse, colours
@@ -195,31 +197,31 @@ namespace CellularAutomata.Automata
 
             //Reset rule
             rule = new int[ruleLength];
-            //Remove rule answer
-            _device.CursorTop--;
 
-            int maxNumber = (int)Math.Pow(caBase, ruleLength) - 1;
-
-            //Get rule from user
-            //TODO shorten string
-            _device.WriteLine("Rule should be entered as a 1 to " + Math.Ceiling(Math.Log10(maxNumber)) + " digit number between " + 0 + " and " + maxNumber);
-            int numberDecimal = _device.GetNumber("Rule", maxNumber + 1, false);
+            //Get rule from user, caBase to the power of ruleLength - 1 is the maximum rule enterable
+            int ruleDecimal = _device.GetNumber("Enter Rule", (int)Math.Pow(caBase, ruleLength) - 1, false);
             //Convert rule to a number as long as ruleLength in base caBase
-            string numberBase = IntExtensions.BaseChange(numberDecimal, caBase).PadLeft(ruleLength, '0');
+            string ruleBase = IntExtensions.BaseChange(ruleDecimal, caBase).PadLeft(ruleLength, '0');
             //Store rule in rule var in reverse order
-            for (int i = 0; i < numberBase.Length; i++)
+            for (int i = 0; i < ruleBase.Length; i++)
             {
-                rule[ruleLength - 1 - i] = int.Parse(numberBase[i].ToString());
+                rule[ruleLength - 1 - i] = int.Parse(ruleBase[i].ToString());
             }
 
             return rule;
         }
 
+        private int GetDelay(Dictionary<string, int> allowedDelays)
+        {
+            string option = _device.GetOption("Select Delay", allowedDelays.Keys.ToArray(), true);
+
+            return allowedDelays[option];
+        }
+
         private int[,] GetSeed(Dictionary<string, Dictionary<Point, int>> allowedSeeds, int maxSeedValue, uint stateHeight, uint seedStart)
         {
             //Get seed from user
-            //TODO change request to make sense for reversible CA
-            string option = _device.GetOption("Select Initial Row", allowedSeeds.Keys.ToArray(), true);
+            string option = _device.GetOption("Select Seed Data", allowedSeeds.Keys.ToArray(), true);
 
             //Create array for seed, width has + 1 as width should be 0 to MaxSeedSize
             int[,] seed = new int[stateHeight, MaxSeedSize + 1];
@@ -231,9 +233,14 @@ namespace CellularAutomata.Automata
                 SetupConsole();
                 Console.CursorVisible = true;
 
+                //Whether or not next input is cell selection or cell value
+                //if input device supports both then this is ignored
+                bool cellSelection = true;
+
                 while (Console.CursorVisible)
                 {
-                   ConsoleKeyInfo pressedKey = _device.ReadKey(true);
+                    //Requests movement input unless cellSelection is false, then requests number input instead
+                    ConsoleKeyInfo pressedKey = _device.ReadKey(true, cellSelection ? InputType.Arrows : InputType.Numbers);
 
                     //Move cursor or end while loop
                     switch (pressedKey.Key)
@@ -253,22 +260,34 @@ namespace CellularAutomata.Automata
                         case ConsoleKey.Enter:
                             Console.CursorVisible = false;
                             break;
-                    }
+                        case ConsoleKey.Backspace:
+                            cellSelection = false;
+                            break;
+                        default:
+                            //If this input should affect cell values rather than selected cell
+                            //when using input devices with more buttons like a keyboard this is always used
+                            //otherwise only when last input switched to number input
+                            if (!cellSelection || !_device.ReducedInput)
+                            {
+                                //check if pressed char is a number
+                                int pressedNumber = pressedKey.KeyChar - 48;
+                                if (pressedNumber < 0 || pressedNumber >= maxSeedValue) continue;
 
-                    //check if pressed char is a number
-                    int pressedNumber = pressedKey.KeyChar - 48;
-                    if (pressedNumber < 0 || pressedNumber >= maxSeedValue) continue;
-
-                    //Keep backup of cursor position
-                    int cursorX = Console.CursorLeft;
-                    int cursorY = Console.CursorTop;
-                    //Update seed
-                    seed[seedStart + cursorY, cursorX] = pressedNumber;
-                    //Update console and put cursor one right of last position
-                    Console.BackgroundColor = Colours[pressedNumber];
-                    Console.WriteLine(' ');
-                    Console.CursorTop = cursorY;
-                    Console.CursorLeft = cursorX + 1;
+                                //Keep backup of cursor position
+                                int cursorX = Console.CursorLeft;
+                                int cursorY = Console.CursorTop;
+                                //Update seed
+                                seed[seedStart + cursorY, cursorX] = pressedNumber;
+                                //Update console and put cursor one right of last position
+                                Console.BackgroundColor = Colours[pressedNumber];
+                                Console.WriteLine(' ');
+                                Console.CursorTop = cursorY;
+                                Console.CursorLeft = cursorX + 1;
+                                cellSelection = true;
+                            }
+                            
+                            break;
+                    }                  
                 }
             }
             else
@@ -288,13 +307,6 @@ namespace CellularAutomata.Automata
             }
 
             return seed;
-        }
-
-        private int GetDelay(Dictionary<string, int> allowedDelays)
-        {
-            string option = _device.GetOption("Select Delay", allowedDelays.Keys.ToArray(), true);
-
-            return allowedDelays[option];
         }
     }
 }
