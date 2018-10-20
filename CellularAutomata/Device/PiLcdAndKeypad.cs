@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using RaspberrySharp.Components.Displays.Hd44780;
 using RaspberrySharp.Components.Expanders.Pcf8574;
+using RaspberrySharp.Components.Inputs.COM14662;
 using RaspberrySharp.IO;
 using RaspberrySharp.IO.GeneralPurpose;
 using RaspberrySharp.IO.InterIntegratedCircuit;
@@ -100,11 +101,10 @@ namespace CellularAutomata.Device
             //Wait until an key allowed by input is pressed         
             while (true)
             {
-                //TODO Add keypad support
-                ConsoleKeyInfo key = Console.ReadKey(true);
+                char key = COM14662.ReadChar();
 
                 //Inputs that can always occur
-                switch (key.KeyChar)
+                switch (key)
                 {
                     //Backspace
                     case '*':
@@ -125,26 +125,26 @@ namespace CellularAutomata.Device
                 //Number and movement inputs
                 switch (input)
                 {
-                    case InputType.Numbers when char.IsDigit(key.KeyChar):
+                    case InputType.Numbers when char.IsDigit(key):
                         if (!intercept)
                         {
-                            Write(key.KeyChar);
+                            Write(key);
                         }
-                        return key;
+                        return new ConsoleKeyInfo(key, (ConsoleKey)Enum.Parse(typeof(ConsoleKey), "D" + key), false, false, false);
                     case InputType.Arrows:
-                        switch (key.Key)
+                        switch (key)
                         {
                             //Left Arrow
-                            case ConsoleKey.D4:
+                            case '4':
                                 return new ConsoleKeyInfo('\0', ConsoleKey.LeftArrow, false, false, false);
                             //Right Arrow
-                            case ConsoleKey.D6:
+                            case '6':
                                 return new ConsoleKeyInfo('\0', ConsoleKey.RightArrow, false, false, false);
                             //Up Arrow
-                            case ConsoleKey.D2:
+                            case '2':
                                 return new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false);
                             //Down Arrow
-                            case ConsoleKey.D8:
+                            case '8':
                                 return new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false);
                         }
 
