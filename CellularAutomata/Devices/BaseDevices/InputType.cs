@@ -1,4 +1,4 @@
-﻿namespace CellularAutomata.Device
+﻿namespace CellularAutomata.Devices.BaseDevices
 {
     public enum InputType
     {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using CellularAutomata.Devices.BaseDevices;
 
 namespace CellularAutomata.Automata
 {
@@ -41,10 +42,10 @@ namespace CellularAutomata.Automata
             {"Manual Seed", null}
         };
 
-        public ElementaryCa(Device.Device device) : base(StateHeight, InputCount, SeedStartRow, device, DefaultRules, CAbase, DefaultSeeds, DefaultColours) {}
+        public ElementaryCa(Device device) : base(StateHeight, InputCount, SeedStartRow, device, DefaultRules, CAbase, DefaultSeeds, DefaultColours) {}
 
         //Rule must be an 8 digit binary number and seed must be a binary number that is shorter than current console width
-        public ElementaryCa(int[] rule, int[,] seed, int delay, Device.Device device) : base(StateHeight, InputCount, SeedStartRow, device, rule, seed, delay, DefaultColours) {}
+        public ElementaryCa(int[] rule, int[,] seed, int delay, Device device) : base(StateHeight, InputCount, SeedStartRow, device, rule, seed, delay, DefaultColours) {}
 
         //Find next row by applying rule to previous row
         public override void Iterate()

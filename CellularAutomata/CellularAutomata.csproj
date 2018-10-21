@@ -60,10 +60,15 @@
     <Compile Include="Automata\Modification.cs" />
     <Compile Include="Automata\SecondOrderReversibleCA.cs" />
     <Compile Include="Automata\ThreeColourTotalisticCA.cs" />
-    <Compile Include="Device\Device.cs" />
-    <Compile Include="Device\ConsoleAndKeyboard.cs" />
-    <Compile Include="Device\InputType.cs" />
-    <Compile Include="Device\PiLcdAndKeypad.cs" />
+    <Compile Include="Devices\BaseDevices\Device.cs" />
+    <Compile Include="Devices\Inputs\PiCOM14662Keypad.cs" />
+    <Compile Include="Devices\ConsoleAndKeyboard.cs" />
+    <Compile Include="Devices\BaseDevices\Input.cs" />
+    <Compile Include="Devices\BaseDevices\InputType.cs" />
+    <Compile Include="Devices\BaseDevices\SecondaryDisplay.cs" />
+    <Compile Include="Devices\Inputs\Keyboard.cs" />
+    <Compile Include="Devices\PiLcdAndKeypad.cs" />
+    <Compile Include="Devices\Displays\PiHd44780Lcd.cs" />
     <Compile Include="IntExtensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,5 +77,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

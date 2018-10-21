@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using CellularAutomata.Devices.BaseDevices;
 
 namespace CellularAutomata.Automata
 {
@@ -45,12 +46,12 @@ namespace CellularAutomata.Automata
             {"Manual Seed", null}
         };
 
-        public ThreeColourTotalisticCa(Device.Device device) : base(StateHeight, InputCount, SeedStartRow, device, DefaultRules, CAbase, DefaultSeeds, DefaultColours)
+        public ThreeColourTotalisticCa(Device device) : base(StateHeight, InputCount, SeedStartRow, device, DefaultRules, CAbase, DefaultSeeds, DefaultColours)
         {
             Colours = DefaultColours;
         }
 
-        public ThreeColourTotalisticCa(int[] rule, int[,] seed, int delay, Device.Device device) : base(StateHeight, InputCount, SeedStartRow, device, rule, seed, delay, DefaultColours)
+        public ThreeColourTotalisticCa(int[] rule, int[,] seed, int delay, Device device) : base(StateHeight, InputCount, SeedStartRow, device, rule, seed, delay, DefaultColours)
         {
             Colours = DefaultColours;
         }

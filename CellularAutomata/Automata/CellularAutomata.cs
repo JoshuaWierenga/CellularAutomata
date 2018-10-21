@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
-using CellularAutomata.Device;
+using CellularAutomata.Devices.BaseDevices;
 
 namespace CellularAutomata.Automata
 {
@@ -37,11 +37,11 @@ namespace CellularAutomata.Automata
             {"Very Slow (200ms)", 200}
         };
 
-        private readonly Device.Device _device;
+        private readonly Device _device;
 
         //Height controls height of state array, input count is the number of inputs possible and controls rule length
         //and seed position controls y position to begin placing seed
-        protected CellularAutomata(uint stateHeight, int inputCount, uint seedPosition, Device.Device device,
+        protected CellularAutomata(uint stateHeight, int inputCount, uint seedPosition, Device device,
             Dictionary<string, int[]> allowedRules, int caBase, Dictionary<string, Dictionary<Point, int>> allowedSeeds,
             ConsoleColor[] colours)
         {
@@ -56,7 +56,7 @@ namespace CellularAutomata.Automata
         //Height controls height of state array, input count is the number of inputs possible and controls rule length
         //and seed position controls y position to begin placing seed
         //#TODO limit max rule to prevent entering non existant rules
-        protected CellularAutomata(uint stateHeight, uint inputCount, uint seedPosition, Device.Device device,
+        protected CellularAutomata(uint stateHeight, uint inputCount, uint seedPosition, Device device,
             int[] rule, int[,] seed, int delay, ConsoleColor[] colours)
         {        
             if (rule.Length != inputCount)
@@ -126,13 +126,14 @@ namespace CellularAutomata.Automata
         }
 
         //Setups up the console to draw cells, can optionally be overridden to change setup
+        //TODO fix backgroundColor on raspberry pi
         //TODO be able to change entire background colour after drawing has begun
         public virtual void SetupConsole()
         {
             Console.BackgroundColor = Colours[0];
             Console.CursorVisible = false;
             Console.Clear();
-            _device.Clear();
+            _device.SecondaryDisplay?.Clear();
         }
 
         //Allows modification of CA once it has started, to e.g. change delay, reverse, colours
@@ -240,7 +241,7 @@ namespace CellularAutomata.Automata
                 while (Console.CursorVisible)
                 {
                     //Requests movement input unless cellSelection is false, then requests number input instead
-                    ConsoleKeyInfo pressedKey = _device.ReadKey(true, cellSelection ? InputType.Arrows : InputType.Numbers);
+                    ConsoleKeyInfo pressedKey = _device.Input.ReadKey(true, cellSelection ? InputType.Arrows : InputType.Numbers);
 
                     //Move cursor or end while loop
                     switch (pressedKey.Key)
@@ -267,7 +268,7 @@ namespace CellularAutomata.Automata
                             //If this input should affect cell values rather than selected cell
                             //when using input devices with more buttons like a keyboard this is always used
                             //otherwise only when last input switched to number input
-                            if (!cellSelection || !_device.ReducedInput)
+                            if (!cellSelection || !_device.Input.ReducedInput)
                             {
                                 //check if pressed char is a number
                                 int pressedNumber = pressedKey.KeyChar - 48;

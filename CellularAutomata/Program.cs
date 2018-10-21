@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using CellularAutomata.Automata;
-using CellularAutomata.Device;
+using CellularAutomata.Devices;
+using CellularAutomata.Devices.BaseDevices;
 
 namespace CellularAutomata
 {
@@ -17,8 +18,8 @@ namespace CellularAutomata
 
         private static void Main(string[] args)
         {
-            //Device.Device device = new PiLcdAndKeypad(0x27, PiLcdAndKeypad.SetupPcf8574Connection(0x27));
-            Device.Device device = new ConsoleAndKeyboard();
+            //Device device = new PiLcdAndKeypad(PiHd44780Lcd.SetupPcf8574Connection(0x27));
+            Device device = new ConsoleAndKeyboard();
 
             Automata.CellularAutomata ca = SelectAutomata(device);
 
@@ -31,7 +32,7 @@ namespace CellularAutomata
             }
         }
 
-        private static Automata.CellularAutomata SelectAutomata(Device.Device device)
+        private static Automata.CellularAutomata SelectAutomata(Device device)
         {
             //Ask user to pick automata
             //TODO mention this is the time to set size of console window
