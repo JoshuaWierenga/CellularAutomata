@@ -25,12 +25,14 @@
             return new string(buffer, i, 32 - i);
         }
 
+        //Removes the first row of the array and moves all other rows back by one row
         public static void ShiftBack(this int[,] array)
         {
             for (int i = 1; i <= array.GetLength(0); i++)
             {
                 for (int j = 0; j < array.GetLength(1); j++)
                 {
+                    //Clear last row as there is no row to replace it with
                     if (i == array.GetLength(0))
                     {
                         array[i - 1, j] = 0;

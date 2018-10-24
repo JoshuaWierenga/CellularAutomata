@@ -27,6 +27,7 @@ namespace CellularAutomata.Automata
             ConsoleColor.Black
         };
 
+        //Built in rules
         private static readonly Dictionary<string, int[]> DefaultRules = new Dictionary<string, int[]>
         {
             {"Rule 102", new[]{0, 1, 1, 0, 0, 1, 1, 0}},
@@ -34,6 +35,7 @@ namespace CellularAutomata.Automata
             {"Manual Rule", null}
         };
 
+        //Built in seeds
         private static readonly Dictionary<string, Dictionary<Point, int>> DefaultSeeds = new Dictionary<string, Dictionary<Point, int>>
         {
             {"Single Top Left", new Dictionary<Point, int> {{new Point(0, 1), 1}}},
@@ -42,12 +44,15 @@ namespace CellularAutomata.Automata
             {"Manual Seed", null}
         };
 
+        //Sets up Elementary CA, device allows control of hardware other than the console
         public ElementaryCa(Device device) : base(StateHeight, InputCount, SeedStartRow, device, DefaultRules, CAbase, DefaultSeeds, DefaultColours) {}
 
-        //Rule must be an 8 digit binary number and seed must be a binary number that is shorter than current console width
+        //Sets up Elementary CA, rule controls output for input neighbourhoods and must be an 8 digit binary number, seed controls initial ca state
+        //and must be a MaxSeedSize digit binary number and device allows control of hardware other than the console
         public ElementaryCa(int[] rule, int[,] seed, int delay, Device device) : base(StateHeight, InputCount, SeedStartRow, device, rule, seed, delay, DefaultColours) {}
 
-        //Find next row by applying rule to previous row
+        //Find next row by applying rule to current row
+        //takes each group of 3 bits in current row and finds subrule that matches them and stores outputs as new row 
         public override void Iterate()
         {
             if (!Running)
@@ -55,6 +60,7 @@ namespace CellularAutomata.Automata
                 return;
             }
 
+            //Base handles shifting state array back one row to create room for the new row and sets outer cells
             base.Iterate();
 
             for (uint i = 1; i < State.GetLength(1) - 1; i++)
@@ -77,6 +83,8 @@ namespace CellularAutomata.Automata
                 return;
             }
 
+            //Base takes both rows of state array and sets background colour to match their values and draws them the the same cell
+            //using unicode block chars
             base.Draw();
         }
     }

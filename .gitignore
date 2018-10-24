@@ -184,7 +184,8 @@ PublishScripts/
 *.nupkg
 # The packages folder can be ignored because of Package Restore
 **/[Pp]ackages/*
-# except for local library which is needed for project
+# except for local libraries which are needed for project
+!/packages/RaspberrySharp.1.3.2-beta-fixed2/
 !/packages/RaspberrySharp.Components/
 # and build/, which is used as an MSBuild target.
 !**/[Pp]ackages/build/

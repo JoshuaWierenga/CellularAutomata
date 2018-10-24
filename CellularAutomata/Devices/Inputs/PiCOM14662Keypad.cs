@@ -6,6 +6,7 @@ namespace CellularAutomata.Devices.Inputs
 {
     class PiCOM14662Keypad : Input
     {
+        //Needs access to second display to be able to write input chars to it
         private readonly SecondaryDisplay _display;
 
         public sealed override bool ReducedInput { get; protected set; }
@@ -13,17 +14,19 @@ namespace CellularAutomata.Devices.Inputs
         //TODO allow changing pins
         public PiCOM14662Keypad(SecondaryDisplay textDisplay = null)
         {
+            //Keypads only has 12 buttons so special setup is required to handle both numbers and arrows
             ReducedInput = true;
             _display = textDisplay;
         }
 
-        //Reads a char form some form of keyboard, in this case a 12 char keypad
-        //intercept allows preventing key from appearing on display
+        //Handles getting a single character input from user
+        //intercept controls whether to stop input being written the screen, input controls whether to get number or arrow entry
         public override ConsoleKeyInfo ReadKey(bool intercept, InputType input)
         {
             //Wait until an key allowed by input is pressed         
             while (true)
             {
+                //Get char from user
                 char key = COM14662.ReadChar();
 
                 //Inputs that can always occur
@@ -76,14 +79,17 @@ namespace CellularAutomata.Devices.Inputs
             }
         }
 
-        //Reads a string form some form of keyboard, in this case a 12 char keypad
+        //Handles getting an entire string from the user
         public override string ReadLine()
         {
             string input = "";
 
+            //Add each char to input until enter is pressed, then return input
             while (true)
             {
+                //Get number from user
                 ConsoleKeyInfo pressedKey = ReadKey(false, InputType.Numbers);
+
                 switch (pressedKey.Key)
                 {
                     case ConsoleKey.Backspace when input.Length != 0:
@@ -95,6 +101,7 @@ namespace CellularAutomata.Devices.Inputs
                     default:
                         input += pressedKey.KeyChar;
 
+                        //Clear current line if this is the first char
                         if (!_display.CursorVisible)
                         {
                             //Clear rest of the current line

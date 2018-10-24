@@ -29,12 +29,14 @@ namespace CellularAutomata.Automata
             ConsoleColor.Black
         };
 
+        //Built in rules
         private static readonly Dictionary<string, int[]> DefaultRules = new Dictionary<string, int[]>
         {
             {"Code 777", new[]{0, 1, 2, 1, 0, 0, 1}},
             {"Manual Rule", null}
         };
 
+        //Built in seeds
         private static readonly Dictionary<string, Dictionary<Point, int>> DefaultSeeds = new Dictionary<string, Dictionary<Point, int>>
         {
             {"Single 1 Top Left", new Dictionary<Point, int> {{new Point(0, 1), 1}}},
@@ -46,17 +48,23 @@ namespace CellularAutomata.Automata
             {"Manual Seed", null}
         };
 
+        //Sets up Three Colour Totalistic CA, device allows control of hardware other than the console
         public ThreeColourTotalisticCa(Device device) : base(StateHeight, InputCount, SeedStartRow, device, DefaultRules, CAbase, DefaultSeeds, DefaultColours)
         {
+            //This CA needs more than two colours so more must be added
             Colours = DefaultColours;
         }
 
+        //Sets up Three Colour Totalistic CA, rule controls output for input neighbourhoods and must be a 7 bit binary number, seed controls initial ca state
+        //and must be a MaxSeedSize digit binary number and device allows control of hardware other than the console
         public ThreeColourTotalisticCa(int[] rule, int[,] seed, int delay, Device device) : base(StateHeight, InputCount, SeedStartRow, device, rule, seed, delay, DefaultColours)
         {
+            //This CA needs more than two colours so more must be added
             Colours = DefaultColours;
         }
 
         //Find next row by applying rule to previous row
+        //takes each group of 3 bits in current row, adds them and finds subrule that matches them and stores outputs as new row 
         public override void Iterate()
         {
             if (!Running)

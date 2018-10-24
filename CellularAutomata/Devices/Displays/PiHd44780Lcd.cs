@@ -29,7 +29,7 @@ namespace CellularAutomata.Devices.Displays
                 {
                     _cursorPosition.Row = DisplaySize.Height - 1;
                 }
-                //Wrap if more than 1
+                //Wrap if more than display height
                 else if (value >= DisplaySize.Height)
                 {
                     _cursorPosition.Row = 0;
@@ -54,7 +54,7 @@ namespace CellularAutomata.Devices.Displays
                 {
                     _cursorPosition.Column = DisplaySize.Width - 1;
                 }
-                //Wrap if more than 15
+                //Wrap if more than display width
                 else if (value >= DisplaySize.Width)
                 {
                     _cursorPosition.Column = 0;
@@ -94,7 +94,7 @@ namespace CellularAutomata.Devices.Displays
         public override void Write(object value)
         {
             _lcd.Write(value);
-            _cursorPosition.Column++;
+            _cursorPosition.Column += value.ToString().Length;
         }
         
         //Writes value + newline to te display
@@ -105,7 +105,7 @@ namespace CellularAutomata.Devices.Displays
             _cursorPosition.Row++;
         }
 
-        //Setup Hd44780 connection when connected directly to the Raspberry Pi
+        //Sets up Hd44780 connection when connected directly to the Raspberry Pi
         public static Hd44780Pins LoadGpioConfiguration(ProcessorPin registerSelectPin, ProcessorPin clockPin, IEnumerable<ProcessorPin> dataPins)
         {
             IGpioConnectionDriver driver = GpioConnectionSettings.DefaultDriver;
@@ -115,7 +115,7 @@ namespace CellularAutomata.Devices.Displays
                 dataPins.Select(p => (IOutputBinaryPin)driver.Out(p)));
         }
 
-        //Setup Hd44780 connection when connected to the Raspberry Pi though a Pcf8574 I2c io expander
+        //Sets up Hd44780 connection when connected to the Raspberry Pi though a Pcf8574 I2c io expander
         public static Hd44780Pins SetupPcf8574Connection(int I2CAddress)
         {
             const Pcf8574Pin clockPin = Pcf8574Pin.P2;

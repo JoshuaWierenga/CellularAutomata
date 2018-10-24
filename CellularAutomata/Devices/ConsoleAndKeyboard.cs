@@ -13,13 +13,15 @@ namespace CellularAutomata.Devices
             SecondaryDisplay = null;
         }
 
-        //Display list of options to user and returns picked option
-        public override string GetOption(string request, string[] options, bool resetClear)
+        //Shows request and options to the user and returns selected option
+        //location controls which screen the request and/or options are displayed on but is ignored since only output is the console
+        //clear controls whether or not the clear before displaying request and/or options
+        public override string GetOption(OutputLocation location, string request, string[] options, bool clear)
         {
             //Rerequest until option is picked
             while (true)
             {
-                if (resetClear)
+                if (clear)
                 {
                     Console.Clear();
                 }
@@ -42,12 +44,12 @@ namespace CellularAutomata.Devices
         }
     
         //Gets number between 0 and maxNumber from user
-        public override int GetNumber(string request, int maxNumber, bool resetClear)
+        public override int GetNumber(string request, int maxNumber, bool clear)
         {
             //Rerequest until number between 0 and  maxNumber is entered
             while (true)
             {
-                if (resetClear)
+                if (clear)
                 {
                     Console.Clear();
                 }
@@ -57,7 +59,7 @@ namespace CellularAutomata.Devices
                                   " digit number between " + 0 + " and " + maxNumber);
                 Console.Write(request + ": ");
 
-                //Return if input is between 0 and maxNumber, reask user otherwise
+                //Return if input is a number between 0 and option.Length - 1, restart otherwise
                 if (int.TryParse(Input.ReadLine(), out int input) && input >= 0 && input <= maxNumber)
                 {
                     return input;

@@ -16,7 +16,7 @@ namespace CellularAutomata.Automata
         //Number of possible inputs, sets required rule length
         private const int InputCount = 16;
 
-        //Position to start storing seed in, Stores seed in previous row + current row,
+        //Position to start storing seed in, stores seed in previous row + current row,
         private const uint SeedStartRow = 1;
 
         //Stores colours used for cells
@@ -27,12 +27,14 @@ namespace CellularAutomata.Automata
             ConsoleColor.Black
         };
 
+        //Built in rules
         private static readonly Dictionary<string, int[]> DefaultRules = new Dictionary<string, int[]>
         {
             {"Rule 57630(30R)", new[]{0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1}},
             {"Manual Rule", null}
         };
 
+        //Built in seeds
         private static readonly Dictionary<string, Dictionary<Point, int>> DefaultSeeds = new Dictionary<string, Dictionary<Point, int>>
         {
             {"2 Stacked Top Left", new Dictionary<Point, int> {{new Point(0, 1), 1}, {new Point(0, 2), 1}}},
@@ -41,12 +43,15 @@ namespace CellularAutomata.Automata
             {"Manual Seed", null}
         };
 
+        //Sets up Second Order Reversible CA, device allows control of hardware other than the console
         public SecondOrderReversibleCa(Device device) : base(StateHeight, InputCount,SeedStartRow, device, DefaultRules, CAbase, DefaultSeeds, DefaultColours) {}
 
-        //Rule must be a 16 digit binary number and seed must be a binary number that is shorter than max chars on console row
+        //Sets up Second Order Reversible CA, rule controls output for input neighbourhoods and must be a 16 digit binary number, seed controls initial ca state
+        //and must be a MaxSeedSize digit binary number and device allows control of hardware other than the console
         public SecondOrderReversibleCa(int[] rule, int[,] seed, int delay, Device device) : base(StateHeight, InputCount, SeedStartRow, device, rule, seed, delay, DefaultColours) {}
 
-        //Find next row by applying rule to previous rows
+        //Find next row by applying rule to previous + current rows
+        //takes each group of 3 bits in current row + bit drectly above in previous row and finds subrule that matches them and stores outputs as new row 
         public override void Iterate()
         {
             if (!Running)

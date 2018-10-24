@@ -14,6 +14,7 @@ namespace CellularAutomata.Automata
 
         protected uint TimesRan { get; set; }
 
+        //Delay between drawing each row
         protected int Delay { get; set; }
 
         //Stores current state of the automata
@@ -22,12 +23,14 @@ namespace CellularAutomata.Automata
         //Rule determines the output for each input
         protected int[] Rule { get; }
 
-        //Default colours used by CAs
+        //Colours used by CAs
         protected ConsoleColor[] Colours { get; set; }
 
         //Whether or not the program can iterate
         protected bool Running { get; set; }
 
+        //TODO move defaults to a different file
+        //Defaults delays between ca draws, more can be added
         private static readonly Dictionary<string, int> DefaultDelays = new Dictionary<string, int>
         {
             {"Very Fast (25ms)", 25},
@@ -37,10 +40,12 @@ namespace CellularAutomata.Automata
             {"Very Slow (200ms)", 200}
         };
 
+        //Handles getting user input and writing to displays other than the console
         private readonly Device _device;
 
-        //Height controls height of state array, input count is the number of inputs possible and controls rule length
-        //and seed position controls y position to begin placing seed
+        //Height controls height of state array, input count is the number of inputs possible and is the max rule length
+        //seed position controls y position to begin placing seed, device allows control of hardware other than the console
+        //and caBase is the numerical base used for ca iteration
         protected CellularAutomata(uint stateHeight, int inputCount, uint seedPosition, Device device,
             Dictionary<string, int[]> allowedRules, int caBase, Dictionary<string, Dictionary<Point, int>> allowedSeeds,
             ConsoleColor[] colours)
@@ -53,8 +58,8 @@ namespace CellularAutomata.Automata
             Running = true;
         }
 
-        //Height controls height of state array, input count is the number of inputs possible and controls rule length
-        //and seed position controls y position to begin placing seed
+        //Height controls height of state array, input count is the number of inputs possible and is the max rule length
+        //seed position controls y position to begin placing seed and device allows control of hardware other than the console
         //#TODO limit max rule to prevent entering non existant rules
         protected CellularAutomata(uint stateHeight, uint inputCount, uint seedPosition, Device device,
             int[] rule, int[,] seed, int delay, ConsoleColor[] colours)
@@ -64,9 +69,9 @@ namespace CellularAutomata.Automata
                 throw new ArgumentOutOfRangeException(nameof(rule), "Rule must contain exactly " + inputCount + " digits");
             }
 
-            if (seed.GetLength(1) >= Console.WindowWidth)
+            if (seed.GetLength(1) != MaxSeedSize)
             {
-                throw new ArgumentOutOfRangeException(nameof(seed), "Seed can only be as long as the console's width");
+                throw new ArgumentOutOfRangeException(nameof(seed), "Seed must contain exactly " + MaxSeedSize + " digits");
             }
 
             Colours = colours;
@@ -74,6 +79,7 @@ namespace CellularAutomata.Automata
             Rule = rule;
             State = new int[stateHeight, seed.GetLength(1)];
 
+            //Move seed into state starting at row seedPosition
             for (uint i = 0; i < seed.GetLength(0); i++)
             {
                 for (uint j = 0; j < seed.GetLength(1); j++)
@@ -83,11 +89,11 @@ namespace CellularAutomata.Automata
             }
 
             Delay = delay;
-
             Running = true;
         }
 
         //Find next row by applying rule to previous row(s)
+        //this function on moves the state back and sets the outer cells, full iteration occurs in CAs
         public virtual void Iterate()
         {
             if (!Running)
@@ -106,6 +112,7 @@ namespace CellularAutomata.Automata
         }
 
         //Draws last row + current as squares by using the unicode block elements
+        //TODO draw entire row in one go to improve speed
         public virtual void Draw()
         {
             Thread.Sleep(Delay);
@@ -117,6 +124,7 @@ namespace CellularAutomata.Automata
 
                 //Draws both cells using the bottom square unicode char
                 //if both are the same then both colours are same and a rectangle is drawn even with the bottom square char
+                //other wise the colours will be different and it will look like two squares
                 Console.BackgroundColor = Colours[previousCell];
                 Console.ForegroundColor = Colours[currentCell];
                 Console.Write('▄');
@@ -126,7 +134,7 @@ namespace CellularAutomata.Automata
         }
 
         //Setups up the console to draw cells, can optionally be overridden to change setup
-        //TODO fix backgroundColor on raspberry pi
+        //TODO fix backgroundColor on raspberry pi returning to black once console begins scrolling
         //TODO be able to change entire background colour after drawing has begun
         public virtual void SetupConsole()
         {
@@ -138,6 +146,8 @@ namespace CellularAutomata.Automata
 
         //Allows modification of CA once it has started, to e.g. change delay, reverse, colours
         //can optionally be overridden to add new modifications
+        //TODO update to work with modification requester, need to provide list of arguments for each modification
+        //TODO change arguments to ensure type so that checks can be removed
         public virtual void Modify(Modification modification, params object[] arguments)
         {
             switch (modification)
@@ -145,7 +155,7 @@ namespace CellularAutomata.Automata
                 case Modification.Colour:
                     if (arguments != null)
                     {
-                        //Allows change colour at position
+                        //Allows changing a single colour
                         if (arguments.Length == 2 && arguments[0] is int position
                                                   && arguments[1] is ConsoleColor positionColour)
                         {
@@ -154,6 +164,7 @@ namespace CellularAutomata.Automata
                         //Allows changing all colours
                         else if (arguments.Length == Colours.Length)
                         {
+                            //Keep backup to reverse colour changing if not all arguments are colours
                             ConsoleColor[] backup = Colours;
                             for (int i = 0; i < arguments.Length; i++)
                             {
@@ -175,12 +186,12 @@ namespace CellularAutomata.Automata
                     }
                     break;
                 case Modification.Running:
-                    //Allows starting or stopping CA
+                    //Allows starting or stopping CA iteration
                     if (arguments != null && arguments.Length == 1 && arguments[0] is bool run)
                     {
                         Running = run;
                     }
-                    //Toggles CA
+                    //Toggles CA iteration
                     else
                     {
                         Running = !Running;
@@ -189,21 +200,22 @@ namespace CellularAutomata.Automata
             }
         }
 
+        //Gets rule from the user, allows both the selection of a rule from allowedRules or manual entry using ruleLength and caBase to define allowed rules
         private int[] GetRule(Dictionary<string, int[]> allowedRules, int ruleLength, int caBase)
         {
-            string option = _device.GetOption("Select Rule", allowedRules.Keys.ToArray(), true);
-            int[] rule = allowedRules[option];
+            //Get rule from the user
+            string option = _device.GetOption(OutputLocation.Both, "Select Rule", allowedRules.Keys.ToArray(), true);
 
-            if (option != "Manual Rule") return rule;
+            if (option != "Manual Rule") return allowedRules[option];
 
-            //Reset rule
-            rule = new int[ruleLength];
+            int[] rule = new int[ruleLength];
 
             //Get rule from user, caBase to the power of ruleLength - 1 is the maximum rule enterable
             int ruleDecimal = _device.GetNumber("Enter Rule", (int)Math.Pow(caBase, ruleLength) - 1, false);
-            //Convert rule to a number as long as ruleLength in base caBase
+            //Converts the rule to a number in caBase, padded to ruleLength digits, this is as 0's are a valid rule value
             string ruleBase = IntExtensions.BaseChange(ruleDecimal, caBase).PadLeft(ruleLength, '0');
-            //Store rule in rule var in reverse order
+            //Store rule in rule var in reverse order, this is so that the least significant rule bit will be subrule 0
+            //and that most significant rule bit will be subrule ruleLength - 1
             for (int i = 0; i < ruleBase.Length; i++)
             {
                 rule[ruleLength - 1 - i] = int.Parse(ruleBase[i].ToString());
@@ -212,17 +224,21 @@ namespace CellularAutomata.Automata
             return rule;
         }
 
+        //Gets draw delay from the user
+        //TODO allow custom delay length
         private int GetDelay(Dictionary<string, int> allowedDelays)
         {
-            string option = _device.GetOption("Select Delay", allowedDelays.Keys.ToArray(), true);
+            //Get delay length from the user
+            string option = _device.GetOption(OutputLocation.Both, "Select Delay", allowedDelays.Keys.ToArray(), true);
 
             return allowedDelays[option];
         }
 
+        //Gets seed data from the user, allows both the selection of a rule from allowedSeeds or manual entry using maxSeedValue and stateHeight to define seed size
         private int[,] GetSeed(Dictionary<string, Dictionary<Point, int>> allowedSeeds, int maxSeedValue, uint stateHeight, uint seedStart)
         {
-            //Get seed from user
-            string option = _device.GetOption("Select Seed Data", allowedSeeds.Keys.ToArray(), true);
+            //Get seed from the user
+            string option = _device.GetOption(OutputLocation.Both, "Select Seed Data", allowedSeeds.Keys.ToArray(), true);
 
             //Create array for seed, width has + 1 as width should be 0 to MaxSeedSize
             int[,] seed = new int[stateHeight, MaxSeedSize + 1];
@@ -243,7 +259,7 @@ namespace CellularAutomata.Automata
                     //Requests movement input unless cellSelection is false, then requests number input instead
                     ConsoleKeyInfo pressedKey = _device.Input.ReadKey(true, cellSelection ? InputType.Arrows : InputType.Numbers);
 
-                    //Move cursor or end while loop
+                    //Move cursor or end seed entry
                     switch (pressedKey.Key)
                     {
                         case ConsoleKey.UpArrow when Console.CursorTop > 0:
@@ -259,9 +275,11 @@ namespace CellularAutomata.Automata
                             Console.CursorLeft++;
                             break;
                         case ConsoleKey.Enter:
+                            //Hides the cursor and ends the while loop
                             Console.CursorVisible = false;
                             break;
                         case ConsoleKey.Backspace:
+                            //Switches to allow cell value entry
                             cellSelection = false;
                             break;
                         default:
@@ -270,7 +288,7 @@ namespace CellularAutomata.Automata
                             //otherwise only when last input switched to number input
                             if (!cellSelection || !_device.Input.ReducedInput)
                             {
-                                //check if pressed char is a number
+                                //check if pressed char is a number and a valid seed value
                                 int pressedNumber = pressedKey.KeyChar - 48;
                                 if (pressedNumber < 0 || pressedNumber >= maxSeedValue) continue;
 
@@ -293,6 +311,7 @@ namespace CellularAutomata.Automata
             }
             else
             {
+                //Copy seed values from allowedSeeds[option] to seed array
                 foreach (KeyValuePair<Point, int> point in allowedSeeds[option])
                 {
                     //Stores the int value in seed[y, x] unless x > console width then just use console width

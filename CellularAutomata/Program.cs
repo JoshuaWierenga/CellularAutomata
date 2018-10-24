@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CellularAutomata.Automata;
@@ -36,7 +36,7 @@ namespace CellularAutomata
         {
             //Ask user to pick automata
             //TODO mention this is the time to set size of console window
-            string option = device.GetOption("Select Automata", Automata.Keys.ToArray(), true);
+            string option = device.GetOption(OutputLocation.Both, "Select Automata", Automata.Keys.ToArray(), true);
 
             //Create instance of selected automata
             return (Automata.CellularAutomata)Activator.CreateInstance(Automata[option], device);

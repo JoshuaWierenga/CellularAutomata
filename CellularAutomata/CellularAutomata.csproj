@@ -37,8 +37,8 @@
     <StartupObject>CellularAutomata.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="RaspberrySharp, Version=1.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\RaspberrySharp.1.3.2-beta\lib\net462\RaspberrySharp.dll</HintPath>
+    <Reference Include="RaspberrySharp, Version=1.3.2.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RaspberrySharp.1.3.2-beta-fixed2\lib\net461\RaspberrySharp.dll</HintPath>
     </Reference>
     <Reference Include="RaspberrySharp.Components, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -61,6 +61,7 @@
     <Compile Include="Automata\SecondOrderReversibleCA.cs" />
     <Compile Include="Automata\ThreeColourTotalisticCA.cs" />
     <Compile Include="Devices\BaseDevices\Device.cs" />
+    <Compile Include="Devices\BaseDevices\OutputLocation.cs" />
     <Compile Include="Devices\Inputs\PiCOM14662Keypad.cs" />
     <Compile Include="Devices\ConsoleAndKeyboard.cs" />
     <Compile Include="Devices\BaseDevices\Input.cs" />
