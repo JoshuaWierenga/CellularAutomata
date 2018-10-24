@@ -20,7 +20,8 @@ namespace CellularAutomata.Automata
         private const uint SeedStartRow = 1;
 
         //Stores colours used for cells
-        private static readonly ConsoleColor[] DefaultColours = {
+        public override ConsoleColor[] Colours => new[]
+        {
             //Used for cells with a value of 0
             ConsoleColor.White,
             //Used for cells with a value of 1
@@ -49,19 +50,11 @@ namespace CellularAutomata.Automata
         };
 
         //Sets up Three Colour Totalistic CA, device allows control of hardware other than the console
-        public ThreeColourTotalisticCa(Device device) : base(StateHeight, InputCount, SeedStartRow, device, DefaultRules, CAbase, DefaultSeeds, DefaultColours)
-        {
-            //This CA needs more than two colours so more must be added
-            Colours = DefaultColours;
-        }
+        public ThreeColourTotalisticCa(Device device) : base(StateHeight, InputCount, SeedStartRow, device, DefaultRules, CAbase, DefaultSeeds) {}
 
         //Sets up Three Colour Totalistic CA, rule controls output for input neighbourhoods and must be a 7 bit binary number, seed controls initial ca state
         //and must be a MaxSeedSize digit binary number and device allows control of hardware other than the console
-        public ThreeColourTotalisticCa(int[] rule, int[,] seed, int delay, Device device) : base(StateHeight, InputCount, SeedStartRow, device, rule, seed, delay, DefaultColours)
-        {
-            //This CA needs more than two colours so more must be added
-            Colours = DefaultColours;
-        }
+        public ThreeColourTotalisticCa(int[] rule, int[,] seed, int delay, Device device) : base(StateHeight, InputCount, SeedStartRow, device, rule, seed, delay) {}
 
         //Find next row by applying rule to previous row
         //takes each group of 3 bits in current row, adds them and finds subrule that matches them and stores outputs as new row 

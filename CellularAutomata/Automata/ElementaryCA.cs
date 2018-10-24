@@ -19,14 +19,6 @@ namespace CellularAutomata.Automata
         //Position to store seed in, 1 stores seed in current row
         private const uint SeedStartRow = 1;
 
-        //Stores colours used for cells
-        private static readonly ConsoleColor[] DefaultColours = {
-            //Used for cells with a value of 0
-            ConsoleColor.White,
-            //Used for cells with a value of 1
-            ConsoleColor.Black
-        };
-
         //Built in rules
         private static readonly Dictionary<string, int[]> DefaultRules = new Dictionary<string, int[]>
         {
@@ -45,11 +37,11 @@ namespace CellularAutomata.Automata
         };
 
         //Sets up Elementary CA, device allows control of hardware other than the console
-        public ElementaryCa(Device device) : base(StateHeight, InputCount, SeedStartRow, device, DefaultRules, CAbase, DefaultSeeds, DefaultColours) {}
+        public ElementaryCa(Device device) : base(StateHeight, InputCount, SeedStartRow, device, DefaultRules, CAbase, DefaultSeeds) {}
 
         //Sets up Elementary CA, rule controls output for input neighbourhoods and must be an 8 digit binary number, seed controls initial ca state
         //and must be a MaxSeedSize digit binary number and device allows control of hardware other than the console
-        public ElementaryCa(int[] rule, int[,] seed, int delay, Device device) : base(StateHeight, InputCount, SeedStartRow, device, rule, seed, delay, DefaultColours) {}
+        public ElementaryCa(int[] rule, int[,] seed, int delay, Device device) : base(StateHeight, InputCount, SeedStartRow, device, rule, seed, delay) {}
 
         //Find next row by applying rule to current row
         //takes each group of 3 bits in current row and finds subrule that matches them and stores outputs as new row 

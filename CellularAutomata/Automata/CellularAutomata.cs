@@ -12,6 +12,7 @@ namespace CellularAutomata.Automata
         //Stores maximum CA size, sometimes 1 less than maximum size to ensure it is an odd number so that there is a middle
         public static readonly int MaxSeedSize = Console.WindowWidth - 2 - (Console.WindowWidth - 1) % 2;
 
+        //Number of times the automata has iterated
         protected uint TimesRan { get; set; }
 
         //Delay between drawing each row
@@ -24,21 +25,13 @@ namespace CellularAutomata.Automata
         protected int[] Rule { get; }
 
         //Colours used by CAs
-        protected ConsoleColor[] Colours { get; set; }
+        public virtual ConsoleColor[] Colours => AutomataDefaults.DefaultColours;
 
         //Whether or not the program can iterate
-        protected bool Running { get; set; }
+        protected bool Running = true;
 
-        //TODO move defaults to a different file
         //Defaults delays between ca draws, more can be added
-        private static readonly Dictionary<string, int> DefaultDelays = new Dictionary<string, int>
-        {
-            {"Very Fast (25ms)", 25},
-            {"Fast (50ms)", 50},
-            {"Medium (100ms)", 100},
-            {"Slow (150ms)", 150},
-            {"Very Slow (200ms)", 200}
-        };
+        public virtual Dictionary<string, int> Delays => AutomataDefaults.DefaultDelays;
 
         //Handles getting user input and writing to displays other than the console
         private readonly Device _device;
@@ -47,22 +40,19 @@ namespace CellularAutomata.Automata
         //seed position controls y position to begin placing seed, device allows control of hardware other than the console
         //and caBase is the numerical base used for ca iteration
         protected CellularAutomata(uint stateHeight, int inputCount, uint seedPosition, Device device,
-            Dictionary<string, int[]> allowedRules, int caBase, Dictionary<string, Dictionary<Point, int>> allowedSeeds,
-            ConsoleColor[] colours)
+            Dictionary<string, int[]> allowedRules, int caBase, Dictionary<string, Dictionary<Point, int>> allowedSeeds)
         {
-            Colours = colours;
             _device = device;
             Rule = GetRule(allowedRules, inputCount, caBase);
-            Delay = GetDelay(DefaultDelays);
+            Delay = GetDelay();
             State = GetSeed(allowedSeeds, caBase, stateHeight, seedPosition);
-            Running = true;
         }
 
         //Height controls height of state array, input count is the number of inputs possible and is the max rule length
         //seed position controls y position to begin placing seed and device allows control of hardware other than the console
         //#TODO limit max rule to prevent entering non existant rules
         protected CellularAutomata(uint stateHeight, uint inputCount, uint seedPosition, Device device,
-            int[] rule, int[,] seed, int delay, ConsoleColor[] colours)
+            int[] rule, int[,] seed, int delay)
         {        
             if (rule.Length != inputCount)
             {
@@ -74,7 +64,6 @@ namespace CellularAutomata.Automata
                 throw new ArgumentOutOfRangeException(nameof(seed), "Seed must contain exactly " + MaxSeedSize + " digits");
             }
 
-            Colours = colours;
             _device = device;
             Rule = rule;
             State = new int[stateHeight, seed.GetLength(1)];
@@ -89,7 +78,6 @@ namespace CellularAutomata.Automata
             }
 
             Delay = delay;
-            Running = true;
         }
 
         //Find next row by applying rule to previous row(s)
@@ -170,7 +158,7 @@ namespace CellularAutomata.Automata
                             {
                                 if (!(arguments[i] is ConsoleColor colour))
                                 {
-                                    Colours = backup;
+                                    backup.CopyTo(Colours, 0);
                                     return;
                                 }
 
@@ -226,12 +214,12 @@ namespace CellularAutomata.Automata
 
         //Gets draw delay from the user
         //TODO allow custom delay length
-        private int GetDelay(Dictionary<string, int> allowedDelays)
+        private int GetDelay()
         {
             //Get delay length from the user
-            string option = _device.GetOption(OutputLocation.Both, "Select Delay", allowedDelays.Keys.ToArray(), true);
+            string option = _device.GetOption(OutputLocation.Both, "Select Delay", Delays.Keys.ToArray(), true);
 
-            return allowedDelays[option];
+            return Delays[option];
         }
 
         //Gets seed data from the user, allows both the selection of a rule from allowedSeeds or manual entry using maxSeedValue and stateHeight to define seed size

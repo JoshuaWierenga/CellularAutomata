@@ -19,14 +19,6 @@ namespace CellularAutomata.Automata
         //Position to start storing seed in, stores seed in previous row + current row,
         private const uint SeedStartRow = 1;
 
-        //Stores colours used for cells
-        private static readonly ConsoleColor[] DefaultColours = {
-            //Used for cells with a value of 0
-            ConsoleColor.White,
-            //Used for cells with a value of 1
-            ConsoleColor.Black
-        };
-
         //Built in rules
         private static readonly Dictionary<string, int[]> DefaultRules = new Dictionary<string, int[]>
         {
@@ -44,11 +36,11 @@ namespace CellularAutomata.Automata
         };
 
         //Sets up Second Order Reversible CA, device allows control of hardware other than the console
-        public SecondOrderReversibleCa(Device device) : base(StateHeight, InputCount,SeedStartRow, device, DefaultRules, CAbase, DefaultSeeds, DefaultColours) {}
+        public SecondOrderReversibleCa(Device device) : base(StateHeight, InputCount,SeedStartRow, device, DefaultRules, CAbase, DefaultSeeds) {}
 
         //Sets up Second Order Reversible CA, rule controls output for input neighbourhoods and must be a 16 digit binary number, seed controls initial ca state
         //and must be a MaxSeedSize digit binary number and device allows control of hardware other than the console
-        public SecondOrderReversibleCa(int[] rule, int[,] seed, int delay, Device device) : base(StateHeight, InputCount, SeedStartRow, device, rule, seed, delay, DefaultColours) {}
+        public SecondOrderReversibleCa(int[] rule, int[,] seed, int delay, Device device) : base(StateHeight, InputCount, SeedStartRow, device, rule, seed, delay) {}
 
         //Find next row by applying rule to previous + current rows
         //takes each group of 3 bits in current row + bit drectly above in previous row and finds subrule that matches them and stores outputs as new row 
