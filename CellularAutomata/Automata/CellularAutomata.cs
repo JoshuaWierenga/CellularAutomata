@@ -28,13 +28,15 @@ namespace CellularAutomata.Automata
         public virtual ConsoleColor[] Colours => AutomataDefaults.DefaultColours;
 
         //Whether or not the program can iterate
-        protected bool Running = true;
+        public bool Running = true;
 
         //Defaults delays between ca draws, more can be added
         public virtual Dictionary<string, int> Delays => AutomataDefaults.DefaultDelays;
 
         //Handles getting user input and writing to displays other than the console
         private readonly Device _device;
+
+        public virtual Dictionary<string, (Type modification, Dictionary<string, Type> arguments)> Modifications => AutomataDefaults.DefaultModifications;
 
         //Height controls height of state array, input count is the number of inputs possible and is the max rule length
         //seed position controls y position to begin placing seed, device allows control of hardware other than the console
@@ -88,6 +90,7 @@ namespace CellularAutomata.Automata
             {
                 return;
             }
+
             //Shift 2d array back by 1 row to make room for new row
             State.ShiftBack();
             TimesRan++;
@@ -103,6 +106,11 @@ namespace CellularAutomata.Automata
         //TODO draw entire row in one go to improve speed
         public virtual void Draw()
         {
+            if (!Running)
+            {
+                return;
+            }
+
             Thread.Sleep(Delay);
 
             for (uint i = 0; i < State.GetLength(1); i++)
@@ -112,7 +120,7 @@ namespace CellularAutomata.Automata
 
                 //Draws both cells using the bottom square unicode char
                 //if both are the same then both colours are same and a rectangle is drawn even with the bottom square char
-                //other wise the colours will be different and it will look like two squares
+                //otherwise the colours will be different and it will look like two squares
                 Console.BackgroundColor = Colours[previousCell];
                 Console.ForegroundColor = Colours[currentCell];
                 Console.Write('▄');
@@ -130,62 +138,6 @@ namespace CellularAutomata.Automata
             Console.CursorVisible = false;
             Console.Clear();
             _device.SecondaryDisplay?.Clear();
-        }
-
-        //Allows modification of CA once it has started, to e.g. change delay, reverse, colours
-        //can optionally be overridden to add new modifications
-        //TODO update to work with modification requester, need to provide list of arguments for each modification
-        //TODO change arguments to ensure type so that checks can be removed
-        public virtual void Modify(Modification modification, params object[] arguments)
-        {
-            switch (modification)
-            {
-                case Modification.Colour:
-                    if (arguments != null)
-                    {
-                        //Allows changing a single colour
-                        if (arguments.Length == 2 && arguments[0] is int position
-                                                  && arguments[1] is ConsoleColor positionColour)
-                        {
-                            Colours[position] = positionColour;
-                        }
-                        //Allows changing all colours
-                        else if (arguments.Length == Colours.Length)
-                        {
-                            //Keep backup to reverse colour changing if not all arguments are colours
-                            ConsoleColor[] backup = Colours;
-                            for (int i = 0; i < arguments.Length; i++)
-                            {
-                                if (!(arguments[i] is ConsoleColor colour))
-                                {
-                                    backup.CopyTo(Colours, 0);
-                                    return;
-                                }
-
-                                Colours[i] = colour;
-                            }
-                        }
-                    }
-                    break;
-                case Modification.Delay:
-                    if (arguments != null && arguments.Length == 1 && arguments[0] is int delay && delay > 0)
-                    {
-                        Delay = delay;
-                    }
-                    break;
-                case Modification.Running:
-                    //Allows starting or stopping CA iteration
-                    if (arguments != null && arguments.Length == 1 && arguments[0] is bool run)
-                    {
-                        Running = run;
-                    }
-                    //Toggles CA iteration
-                    else
-                    {
-                        Running = !Running;
-                    }
-                    break;
-            }
         }
 
         //Gets rule from the user, allows both the selection of a rule from allowedRules or manual entry using ruleLength and caBase to define allowed rules

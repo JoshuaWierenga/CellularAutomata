@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 namespace CellularAutomata.Automata
 {
-    public class AutomataDefaults
+    public static class AutomataDefaults
     {
         //Default colours used by CAs, most are binary CAs so 2 colours is fine
-        public static readonly ConsoleColor[] DefaultColours = {
+        public static readonly ConsoleColor[] DefaultColours =
+        {
             //Used for cells with a value of 0
             ConsoleColor.White,
             //Used for cells with a value of 1
@@ -21,5 +22,13 @@ namespace CellularAutomata.Automata
             {"Slow (150ms)", 150},
             {"Very Slow (200ms)", 200}
         };
+
+        public static readonly Dictionary<string, (Type modification, Dictionary<string, Type> arguments)> DefaultModifications =
+            Modification.GetModifications(new[]
+            {
+                typeof(ChangeColour),
+                typeof(SetRunning),
+                typeof(ToggleRunning)
+            });
     }
 }

@@ -55,12 +55,12 @@ namespace CellularAutomata.Automata
 
             for (uint i = 1; i < State.GetLength(1) - 1; i++)
             {
-                //Concatinate ints and convert to binary
-                string total = State[0, i].ToString() + State[1, i - 1] + State[1, i] + State[1, i + 1];
-                int totalBinary = Convert.ToInt32(total, CAbase);
+                //Concatenate ints and convert to decimal
+                string totalBinary = State[0, i].ToString() + State[1, i - 1] + State[1, i] + State[1, i + 1];
+                int total = Convert.ToInt32(totalBinary, CAbase);
 
-                //Set new cell to rule for totalBinary
-                State[2, i] = Rule[totalBinary];
+                //Set new cell to rule for total
+                State[1, i] = Rule[total];
             }
         }
 
@@ -74,19 +74,6 @@ namespace CellularAutomata.Automata
             }
 
             base.Draw();
-        }
-
-        //Allows modification of CA once it has started, to e.g. change delay, reverse, change colours
-        public override void Modify(Modification modification, params object[] arguments)
-        {
-            base.Modify(modification, arguments);
-
-            switch (modification)
-            {
-                case Modification.Direction:
-                    Reverse();
-                    break;
-            }
         }
 
         //Reverses CA by moving previous row after current row

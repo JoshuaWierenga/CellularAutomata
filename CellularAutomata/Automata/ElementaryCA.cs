@@ -57,12 +57,12 @@ namespace CellularAutomata.Automata
 
             for (uint i = 1; i < State.GetLength(1) - 1; i++)
             {
-                //Concatenate ints and convert to binary
-                string total = State[0, i - 1].ToString() + State[0, i] + State[0, i + 1];
-                int totalBinary = Convert.ToInt32(total, CAbase);
+                //Concatenate ints and convert to decimal
+                string totalBinary = State[0, i - 1].ToString() + State[0, i] + State[0, i + 1];
+                int total = Convert.ToInt32(totalBinary, CAbase);
 
-                //Set new cell to rule for totalBinary
-                State[1, i] = Rule[totalBinary];
+                //Set new cell to rule for total
+                State[1, i] = Rule[total];
             }
         }
 
